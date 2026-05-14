@@ -1330,7 +1330,7 @@ function Interactive3DSection() {
 
 function VideoGrid() {
   const apiKey = import.meta.env.VITE_YOUTUBE_API_KEY;
-  const channelId = import.meta.env.VITE_YOUTUBE_CHANNEL_ID;
+  const channelId = import.meta.env.VITE_YOUTUBE_CHANNEL_ID || import.meta.env.VITE_YOUTUBE_CHANNEL_FINANCIAL_FAIZ_ID;
   const uploadsPlaylistId = useMemo(
     () => (channelId?.startsWith('UC') ? `UU${channelId.slice(2)}` : ''),
     [channelId],
@@ -1355,13 +1355,13 @@ function VideoGrid() {
     ];
 
     const toVideo = (item, index, forceLive = false) => ({
-      id: item.id?.videoId,
-      title: item.snippet?.title || 'Untitled',
+      id: item.id,
+      title: item.title || 'Untitled',
       tag: forceLive
         ? 'LIVE NOW'
-        : new Date(item.snippet?.publishedAt || Date.now()).toLocaleDateString('ms-MY', { day: '2-digit', month: 'short' }),
+        : new Date(item.publishedAt || Date.now()).toLocaleDateString('ms-MY', { day: '2-digit', month: 'short' }),
       accent: accents[index % accents.length],
-      thumbnail: item.snippet?.thumbnails?.high?.url || item.snippet?.thumbnails?.medium?.url || '',
+      thumbnail: item.thumbnail || '',
       isLive: forceLive,
     });
 
@@ -1397,10 +1397,45 @@ function VideoGrid() {
         const [liveData, latestData] = await Promise.all([liveRes.json(), latestRes.json()]);
         const liveItem = liveData?.items?.[0];
         const latestItems = latestData?.items || [];
+        const ids = [
+          ...(liveItem?.id?.videoId ? [liveItem.id.videoId] : []),
+          ...latestItems.map((item) => item.id?.videoId).filter(Boolean),
+        ];
 
-        const liveVideo = liveItem ? toVideo(liveItem, 0, true) : null;
+        const uniqueIds = [...new Set(ids)];
+        const detailsById = new Map();
+
+        if (uniqueIds.length) {
+          const detailsParams = new URLSearchParams({
+            part: 'snippet,liveStreamingDetails',
+            id: uniqueIds.join(','),
+            key: apiKey,
+            maxResults: '10',
+          });
+          const detailsRes = await fetch(`https://www.googleapis.com/youtube/v3/videos?${detailsParams.toString()}`);
+          if (!detailsRes.ok) {
+            throw new Error('YouTube details request failed');
+          }
+          const detailsData = await detailsRes.json();
+          (detailsData?.items || []).forEach((item) => {
+            detailsById.set(item.id, {
+              id: item.id,
+              title: item.snippet?.title || 'Untitled',
+              publishedAt: item.snippet?.publishedAt || null,
+              thumbnail: item.snippet?.thumbnails?.high?.url || item.snippet?.thumbnails?.medium?.url || '',
+              liveBroadcastContent: item.snippet?.liveBroadcastContent || 'none',
+            });
+          });
+        }
+
+        const liveId = liveItem?.id?.videoId || null;
+        const liveDetails = liveId ? detailsById.get(liveId) : null;
+        const liveVideo = liveDetails ? toVideo(liveDetails, 0, true) : null;
         const latestVideos = latestItems
-          .filter((item) => item.id?.videoId && item.id.videoId !== liveVideo?.id)
+          .map((item) => item.id?.videoId)
+          .filter((id) => id && id !== liveId)
+          .map((id) => detailsById.get(id))
+          .filter(Boolean)
           .map((item, i) => toVideo(item, i + 1, false));
 
         const merged = (liveVideo ? [liveVideo, ...latestVideos] : latestVideos).slice(0, 6);
