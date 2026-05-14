@@ -1549,8 +1549,7 @@ function PortalSection() {
                   transition={{ delay: i * 0.06 }}
                   className={`rounded-2xl border border-[#dbe7ff] bg-[#f7fbff] p-4 ${i === 2 ? 'sm:col-span-2' : ''}`}
                 >
-                  <p className="text-xs font-black uppercase tracking-[0.24em] text-[#0757d8]">Story 0{i + 2}</p>
-                  <p className="mt-2 text-sm leading-7 text-gray-700 sm:text-base">{p}</p>
+                  <p className="text-sm leading-7 text-gray-700 sm:text-base">{p}</p>
                 </motion.article>
               ))}
             </div>
