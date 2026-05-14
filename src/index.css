@@ -9,3 +9,18 @@ body,
   background: linear-gradient(180deg, #f4f8ff 0%, #eef5ff 55%, #edf5ff 100%);
   overflow-x: hidden;
 }
+
+@keyframes ff-marquee-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.ff-marquee-track {
+  width: max-content;
+  animation: ff-marquee-scroll 18s linear infinite;
+  will-change: transform;
+}

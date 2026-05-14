@@ -1956,13 +1956,13 @@ function LogoMarquee({ items }) {
 
   return (
     <div className="mt-8 overflow-hidden rounded-[2rem] border border-[#d8e4ff] bg-[#f7fbff] py-6">
-      <motion.div className="flex gap-4 whitespace-nowrap" animate={{ x: ['0%', '-50%'] }} transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}>
+      <div className="ff-marquee-track flex gap-4 whitespace-nowrap">
         {doubled.map((name, index) => (
           <motion.div key={`${name}-${index}`} whileHover={{ y: -8, scale: 1.04 }} className="mx-2 rounded-2xl border border-[#d8e4ff] bg-white px-8 py-5 text-sm font-black text-[#07348f] shadow-sm">
             {name}
           </motion.div>
         ))}
-      </motion.div>
+      </div>
     </div>
   );
 }
