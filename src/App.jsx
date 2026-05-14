@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   AnimatePresence,
+  MotionConfig,
   motion,
   useMotionTemplate,
   useMotionValue,
@@ -338,7 +339,11 @@ function GlobalAmbient() {
   );
 }
 
-function SectionShell({ children, reduceMotion, animation }) {
+function SectionShell({ children, reduceMotion, liteMode, animation }) {
+  if (liteMode) {
+    return <div className="relative">{children}</div>;
+  }
+
   return (
     <div className="relative">
       <motion.div
@@ -2406,6 +2411,10 @@ function Footer() {
   );
 }
 export default function App() {
+  const [isLiteDevice, setIsLiteDevice] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia('(max-width: 900px), (hover: none), (pointer: coarse)').matches;
+  });
   const [showLaunch, setShowLaunch] = useState(() => {
     if (typeof window === 'undefined') return true;
     const isTouchDevice = window.matchMedia('(hover: none), (pointer: coarse)').matches;
@@ -2413,8 +2422,9 @@ export default function App() {
     return !(isTouchDevice || isSmallViewport);
   });
   const reduceMotion = useReducedMotion();
+  const shouldUseLiteMotion = reduceMotion || isLiteDevice;
   const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30 });
+  const scaleX = useSpring(scrollYProgress, shouldUseLiteMotion ? { stiffness: 90, damping: 34 } : { stiffness: 120, damping: 30 });
 
   useEffect(() => {
     if (!showLaunch) return undefined;
@@ -2423,6 +2433,19 @@ export default function App() {
     }, 1800);
     return () => clearTimeout(failSafeId);
   }, [showLaunch]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const media = window.matchMedia('(max-width: 900px), (hover: none), (pointer: coarse)');
+    const onChange = () => setIsLiteDevice(media.matches);
+    onChange();
+    if (typeof media.addEventListener === 'function') {
+      media.addEventListener('change', onChange);
+      return () => media.removeEventListener('change', onChange);
+    }
+    media.addListener(onChange);
+    return () => media.removeListener(onChange);
+  }, []);
 
   const sectionRegistry = {
     hero: <Hero key="hero" />,
@@ -2506,32 +2529,39 @@ export default function App() {
   ];
 
   return (
-    <main
-      className="relative min-h-screen overflow-x-hidden selection:text-white"
-      style={{
-        background: `linear-gradient(180deg,${theme.pageBgStart || '#f4f8ff'} 0%,${theme.pageBgMid || '#eef5ff'} 55%,${theme.pageBgEnd || '#edf5ff'} 100%)`,
-        color: theme.text || '#111111',
-      }}
-    >
-      <div className="pointer-events-none fixed inset-0 z-0 opacity-[0.2] [background-image:repeating-linear-gradient(-32deg,rgba(7,87,216,.18)_0px,rgba(7,87,216,.18)_1px,transparent_1px,transparent_52px)]" />
-      <AnimatePresence>{showLaunch && <LaunchSequence onDone={() => setShowLaunch(false)} />}</AnimatePresence>
-      <CursorAura />
-      <GlobalAmbient />
-      <motion.div className="fixed left-0 right-0 top-0 z-[80] h-1 origin-left" style={{ scaleX, background: theme.primary || '#0757d8' }} />
-
-      <motion.div
-        initial={{ opacity: 0, y: 18 }}
-        animate={{ opacity: showLaunch ? 0 : 1, y: showLaunch ? 18 : 0 }}
-        transition={{ duration: 0.55, ease: 'easeOut' }}
-        className="relative z-10"
+    <MotionConfig reducedMotion={shouldUseLiteMotion ? 'always' : 'never'}>
+      <main
+        className="relative min-h-screen overflow-x-hidden selection:text-white"
+        style={{
+          background: `linear-gradient(180deg,${theme.pageBgStart || '#f4f8ff'} 0%,${theme.pageBgMid || '#eef5ff'} 55%,${theme.pageBgEnd || '#edf5ff'} 100%)`,
+          color: theme.text || '#111111',
+        }}
       >
-        <Header />
-        {sectionOrder.map((node, i) => (
-          <SectionShell key={node.key || i} reduceMotion={reduceMotion} animation={sectionFx[i % sectionFx.length]}>
-            {node}
-          </SectionShell>
-        ))}
-      </motion.div>
-    </main>
+        <div className="pointer-events-none fixed inset-0 z-0 opacity-[0.2] [background-image:repeating-linear-gradient(-32deg,rgba(7,87,216,.18)_0px,rgba(7,87,216,.18)_1px,transparent_1px,transparent_52px)]" />
+        <AnimatePresence>{!shouldUseLiteMotion && showLaunch && <LaunchSequence onDone={() => setShowLaunch(false)} />}</AnimatePresence>
+        {!shouldUseLiteMotion && <CursorAura />}
+        {!shouldUseLiteMotion && <GlobalAmbient />}
+        <motion.div className="fixed left-0 right-0 top-0 z-[80] h-1 origin-left" style={{ scaleX, background: theme.primary || '#0757d8' }} />
+
+        <motion.div
+          initial={{ opacity: 0, y: shouldUseLiteMotion ? 0 : 18 }}
+          animate={{ opacity: showLaunch ? 0 : 1, y: showLaunch ? (shouldUseLiteMotion ? 0 : 18) : 0 }}
+          transition={{ duration: shouldUseLiteMotion ? 0.2 : 0.55, ease: 'easeOut' }}
+          className="relative z-10"
+        >
+          <Header />
+          {sectionOrder.map((node, i) => (
+            <SectionShell
+              key={node.key || i}
+              reduceMotion={reduceMotion}
+              liteMode={shouldUseLiteMotion}
+              animation={sectionFx[i % sectionFx.length]}
+            >
+              {node}
+            </SectionShell>
+          ))}
+        </motion.div>
+      </main>
+    </MotionConfig>
   );
 }
