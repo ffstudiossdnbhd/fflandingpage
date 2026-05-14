@@ -986,18 +986,27 @@ function Hero3D() {
 function Hero() {
   const ref = useRef(null);
   const [wallpaperIndex, setWallpaperIndex] = useState(0);
+  const reduceMotion = useReducedMotion();
+  const [isLiteHero, setIsLiteHero] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia('(max-width: 900px), (hover: none), (pointer: coarse)').matches;
+  });
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
 
-  const titleY = useTransform(scrollYProgress, [0, 1], [0, 120]);
-  const titleScale = useTransform(scrollYProgress, [0, 1], [1, 0.72]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.75], [1, 0.2]);
-  const heroBlur = useTransform(scrollYProgress, [0, 1], ['blur(0px)', 'blur(10px)']);
-  const heroClip = useTransform(scrollYProgress, [0, 1], ['inset(0% 0% 0% 0% round 0px)', 'inset(10% 6% 18% 6% round 48px)']);
-  const cardY = useTransform(scrollYProgress, [0, 1], [0, -90]);
-  const gridY = useTransform(scrollYProgress, [0, 1], [0, 160]);
-  const leftGlowX = useTransform(scrollYProgress, [0, 1], [0, 120]);
-  const rightGlowY = useTransform(scrollYProgress, [0, 1], [0, -120]);
-  const ringRotate = useTransform(scrollYProgress, [0, 1], [0, 26]);
+  const titleY = useTransform(scrollYProgress, [0, 1], [0, isLiteHero ? 42 : 120]);
+  const titleScale = useTransform(scrollYProgress, [0, 1], [1, isLiteHero ? 0.94 : 0.72]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.75], [1, isLiteHero ? 0.86 : 0.2]);
+  const heroBlur = useTransform(scrollYProgress, [0, 1], ['blur(0px)', isLiteHero ? 'blur(0px)' : 'blur(10px)']);
+  const heroClip = useTransform(
+    scrollYProgress,
+    [0, 1],
+    ['inset(0% 0% 0% 0% round 0px)', isLiteHero ? 'inset(0% 0% 0% 0% round 0px)' : 'inset(10% 6% 18% 6% round 48px)'],
+  );
+  const cardY = useTransform(scrollYProgress, [0, 1], [0, isLiteHero ? -24 : -90]);
+  const gridY = useTransform(scrollYProgress, [0, 1], [0, isLiteHero ? 52 : 160]);
+  const leftGlowX = useTransform(scrollYProgress, [0, 1], [0, isLiteHero ? 24 : 120]);
+  const rightGlowY = useTransform(scrollYProgress, [0, 1], [0, isLiteHero ? -30 : -120]);
+  const ringRotate = useTransform(scrollYProgress, [0, 1], [0, isLiteHero ? 8 : 26]);
 
   useEffect(() => {
     if (heroWallpapers.length <= 1) return;
@@ -1006,6 +1015,19 @@ function Hero() {
     }, 6500);
     return () => clearInterval(id);
   }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const media = window.matchMedia('(max-width: 900px), (hover: none), (pointer: coarse)');
+    const onChange = () => setIsLiteHero(media.matches || Boolean(reduceMotion));
+    onChange();
+    if (typeof media.addEventListener === 'function') {
+      media.addEventListener('change', onChange);
+      return () => media.removeEventListener('change', onChange);
+    }
+    media.addListener(onChange);
+    return () => media.removeListener(onChange);
+  }, [reduceMotion]);
 
   return (
     <section ref={ref} id="home" className="relative min-h-[460px] overflow-hidden bg-transparent px-3 pt-16 sm:min-h-[520px] sm:h-[62vh] lg:px-5 lg:pt-20">
@@ -1020,7 +1042,7 @@ function Hero() {
             animate={{ opacity: 0.8, scale: 1 }}
             exit={{ opacity: 0, scale: 1.02 }}
             transition={{ duration: 1.2, ease: 'easeInOut' }}
-            style={{ filter: 'grayscale(10%) saturate(70%) contrast(105%) brightness(0.55)' }}
+            style={{ filter: isLiteHero ? 'brightness(0.62)' : 'grayscale(10%) saturate(70%) contrast(105%) brightness(0.55)' }}
           />
         </AnimatePresence>
         <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(7,52,143,0.6)_0%,rgba(7,87,216,0.5)_52%,rgba(7,52,143,0.6)_100%)]" />
