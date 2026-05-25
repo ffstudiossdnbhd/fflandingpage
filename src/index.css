@@ -21,6 +21,6 @@ body,
 
 .ff-marquee-track {
   width: max-content;
-  animation: ff-marquee-scroll 18s linear infinite;
+  animation: ff-marquee-scroll 36s linear infinite;
   will-change: transform;
 }

@@ -36,6 +36,7 @@ import { getContentConfig } from './contentConfig';
 
 const contentConfig = getContentConfig();
 const navItems = contentConfig.navItems || [];
+const isBm = navItems?.[0]?.label === 'Laman Utama';
 const theme = contentConfig.theme || {};
 const socials = contentConfig.socials || [];
 const fallbackVideos = contentConfig.fallbackVideos || [];
@@ -44,6 +45,7 @@ const seenAt = contentConfig.seenAt || [];
 const campaignChannels = contentConfig.campaignChannels || [];
 const aboutParagraphs = contentConfig.aboutParagraphs || [];
 const heroWallpapers = contentConfig.heroWallpapers || ['/hero-wallpaper-1.jpg', '/hero-wallpaper-2.jpg'];
+const heroCenterLogos = contentConfig.heroCenterLogos || [];
 const sectionContent = contentConfig.sections || {};
 const iconMap = { Music2, Camera, Globe2, Send, Play };
 const socialShowcase = (contentConfig.socialShowcase || []).map((item) => ({
@@ -52,6 +54,7 @@ const socialShowcase = (contentConfig.socialShowcase || []).map((item) => ({
 }));
 const heroContent = sectionContent.hero || {};
 const founderContent = sectionContent.interactiveFounder || {};
+const founderStoryContent = sectionContent.founderStory || {};
 const careerContent = sectionContent.career || {};
 const commandContent = sectionContent.command || {};
 const partnersContent = sectionContent.partners || {};
@@ -62,13 +65,17 @@ const videoSectionContent = sectionContent.videos || {};
 const portalContent = sectionContent.portal || {};
 const simulatorContent = sectionContent.simulator || {};
 const mediaContent = sectionContent.media || {};
+const servicesContent = sectionContent.services || {};
 const defaultSectionLayout = [
   { id: 'hero', visible: true },
+  { id: 'logoBridge', visible: true },
   { id: 'simulator', visible: true },
   { id: 'interactive3d', visible: true },
+  { id: 'founderStory', visible: true },
   { id: 'videos', visible: true },
   { id: 'portal', visible: true },
   { id: 'command', visible: true },
+  { id: 'services', visible: true },
   { id: 'book', visible: true },
   { id: 'media', visible: true },
   { id: 'career', visible: true },
@@ -187,6 +194,18 @@ function Button({ children, href = '#', variant = 'blue', className = '' }) {
 
 function Header() {
   const [open, setOpen] = useState(false);
+  const currentLang = typeof window !== 'undefined'
+    ? (new URLSearchParams(window.location.search).get('lang') || window.localStorage.getItem('ff_content_lang_v1') || 'en')
+    : 'en';
+
+  const switchLanguage = (lang) => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    params.set('lang', lang);
+    window.localStorage.setItem('ff_content_lang_v1', lang);
+    const next = `${window.location.pathname}?${params.toString()}${window.location.hash || ''}`;
+    window.location.assign(next);
+  };
 
   return (
     <header className="fixed left-0 right-0 top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur-2xl">
@@ -201,7 +220,11 @@ function Header() {
           ))}
         </div>
 
-        <div className="hidden items-center gap-4 md:flex">
+        <div className="hidden items-center gap-3 md:flex">
+          <div className="inline-flex items-center overflow-hidden rounded-full border border-[#d8e4ff] bg-white">
+            <button onClick={() => switchLanguage('bm')} className={`px-3 py-1.5 text-xs font-black ${currentLang === 'bm' ? 'bg-[#0757d8] text-white' : 'text-[#07348f]'}`}>BM</button>
+            <button onClick={() => switchLanguage('en')} className={`px-3 py-1.5 text-xs font-black ${currentLang === 'en' ? 'bg-[#0757d8] text-white' : 'text-[#07348f]'}`}>EN</button>
+          </div>
           {socials.map((s) => (
             <a key={s.label} href={s.href} className="text-lg font-black text-[#07348f] transition hover:-translate-y-1 hover:text-[#0757d8]">
               {s.label}
@@ -216,6 +239,10 @@ function Header() {
 
       {open && (
         <div className="border-t border-gray-100 bg-white p-4 lg:hidden">
+          <div className="mb-3 inline-flex items-center overflow-hidden rounded-full border border-[#d8e4ff] bg-white">
+            <button onClick={() => switchLanguage('bm')} className={`px-3 py-1.5 text-xs font-black ${currentLang === 'bm' ? 'bg-[#0757d8] text-white' : 'text-[#07348f]'}`}>BM</button>
+            <button onClick={() => switchLanguage('en')} className={`px-3 py-1.5 text-xs font-black ${currentLang === 'en' ? 'bg-[#0757d8] text-white' : 'text-[#07348f]'}`}>EN</button>
+          </div>
           {navItems.map((item) => (
             <a key={item.label} href={item.href} onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 font-bold text-[#111] hover:bg-[#eef5ff] hover:text-[#0757d8]">
               {item.label}
@@ -653,7 +680,7 @@ function CampaignSimulator() {
   );
   const updatedLabel = lastUpdated
     ? new Date(lastUpdated).toLocaleTimeString('en-MY', { hour: '2-digit', minute: '2-digit' })
-    : 'Live now';
+    : (isBm ? 'Langsung sekarang' : 'Live now');
 
   return (
     <section className="relative overflow-hidden bg-transparent px-4 py-8 sm:px-5 sm:py-10 lg:px-10">
@@ -662,7 +689,7 @@ function CampaignSimulator() {
         <SectionTitle
           eyebrow={simulatorContent.eyebrow || 'Campaign Simulator'}
           title={simulatorContent.title || 'Pick channel, watch impact'}
-          desc={simulatorContent.desc || 'Interactive demo untuk tunjukkan bagaimana setiap saluran beri outcome yang berbeza untuk brand.'}
+          desc={simulatorContent.desc || (isBm ? 'Demo interaktif untuk tunjukkan bagaimana setiap saluran beri outcome berbeza kepada brand.' : 'Interactive demo to show how each channel creates different outcomes for brands.')}
         />
 
         <div className="mt-6 grid gap-5 lg:mt-8 lg:gap-6 lg:grid-cols-[0.42fr_0.58fr]">
@@ -746,7 +773,7 @@ function CountdownRing() {
         />
       </svg>
       <div>
-        <p className="text-xs font-black uppercase tracking-[0.25em] text-blue-100">Launch Window</p>
+        <p className="text-xs font-black uppercase tracking-[0.25em] text-blue-100">{isBm ? 'Tetingkap Pelancaran' : 'Launch Window'}</p>
         <p className="mt-1 text-2xl font-black">{days}d {hours}h</p>
       </div>
     </div>
@@ -897,14 +924,14 @@ function Hero3D() {
   ];
 
   return (
-    <div className="relative mx-auto hidden h-[520px] w-full max-w-[530px] [perspective:1600px] lg:block">
+    <div className="relative mx-auto h-[420px] w-full max-w-[530px] [perspective:1600px] sm:h-[500px] lg:h-[520px]">
       <motion.div
-        className="absolute left-1/2 top-1/2 h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-[2.7rem] border border-white/25 bg-white/20 p-4 shadow-[0_34px_100px_rgba(0,0,0,0.25)] backdrop-blur-xl"
+        className="absolute left-1/2 top-1/2 h-[320px] w-[320px] -translate-x-1/2 -translate-y-1/2 rounded-[2.2rem] border border-white/25 bg-white/20 p-3 shadow-[0_34px_100px_rgba(0,0,0,0.25)] backdrop-blur-xl sm:h-[360px] sm:w-[360px] sm:rounded-[2.5rem] sm:p-4 lg:h-[380px] lg:w-[380px] lg:rounded-[2.7rem]"
         animate={{ rotateX: mouse.y * -5, rotateY: mouse.x * 7 }}
         transition={{ type: 'spring', stiffness: 90, damping: 22 }}
         style={{ transformStyle: 'preserve-3d' }}
       >
-        <div className="relative h-full overflow-hidden rounded-[2.1rem] bg-white p-6 text-[#111]">
+        <div className="relative h-full overflow-hidden rounded-[1.8rem] bg-white p-4 text-[#111] sm:rounded-[2rem] sm:p-5 lg:rounded-[2.1rem] lg:p-6">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_0%,rgba(7,87,216,0.18),transparent_45%)]" />
 
           <div className="relative z-10 flex items-center justify-between">
@@ -918,7 +945,7 @@ function Hero3D() {
             </span>
           </div>
 
-          <motion.div className="relative z-10 mt-7 overflow-hidden rounded-[1.6rem] bg-[#0757d8] p-5 text-white shadow-xl">
+          <motion.div className="relative z-10 mt-5 overflow-hidden rounded-[1.4rem] bg-[#0757d8] p-4 text-white shadow-xl sm:mt-6 sm:p-5 lg:mt-7">
             <motion.div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent" animate={{ x: ['-120%', '120%'] }} transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }} />
             <div className="flex items-center justify-between">
               <p className="font-black">Audience clarity</p>
@@ -941,7 +968,7 @@ function Hero3D() {
             </div>
           </motion.div>
 
-          <div className="relative z-10 mt-5 grid grid-cols-2 gap-3">
+          <div className="relative z-10 mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:gap-3">
             {heroStats.map(([label, value, meta], i) => (
               <motion.div key={label} className="rounded-2xl border border-[#d8e4ff] bg-[#f7fbff] p-3" whileHover={{ y: -3 }}>
                 <p className="text-[11px] font-black uppercase tracking-[0.14em] text-[#0757d8]">{label}</p>
@@ -962,7 +989,7 @@ function Hero3D() {
       ].map(([cls, Icon, text], i) => (
         <motion.div
           key={text}
-          className={`absolute ${cls}`}
+          className={`absolute hidden sm:block ${cls}`}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: [0, -6, 0] }}
           transition={{
@@ -1108,11 +1135,41 @@ function Hero() {
         transition={{ delay: 1.1, duration: 0.55 }}
         className="absolute bottom-4 left-1/2 z-20 hidden -translate-x-1/2 items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white/90 backdrop-blur-xl lg:flex"
       >
-        Scroll
+        {isBm ? 'Skrol' : 'Scroll'}
         <motion.span animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }} className="h-5 w-3 rounded-full border border-white/60">
           <span className="mx-auto mt-1 block h-1.5 w-1.5 rounded-full bg-white" />
         </motion.span>
       </motion.div>
+    </section>
+  );
+}
+
+function LogoBridgeSection() {
+  const logos = heroCenterLogos;
+  if (!logos.length) return null;
+  const doubled = [...logos, ...logos];
+
+  return (
+    <section className="relative z-20 mt-8 px-3 pb-8 sm:mt-10 sm:pb-10 lg:mt-12 lg:pb-12">
+      <div className="mx-auto max-w-6xl overflow-hidden rounded-2xl border border-[#d8e4ff] bg-white px-3 py-4">
+        <p className="mb-3 text-center text-sm font-black uppercase tracking-[0.36em] text-[#0757d8] sm:mb-4 sm:text-base">
+          {isBm ? 'Kolaborasi Bersama' : 'Collaborations'}
+        </p>
+        <div className="ff-marquee-track flex items-center gap-10 whitespace-nowrap [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+          {doubled.map((logo, i) => (
+            <img
+              key={`${logo}-${i}`}
+              src={logo}
+              alt="Collaborator logo"
+              loading="lazy"
+              className="h-11 w-auto shrink-0 object-contain opacity-100 transition sm:h-12"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+          ))}
+        </div>
+      </div>
     </section>
   );
 }
@@ -1234,7 +1291,7 @@ function Interactive3DSection() {
                       textShadow: '0 4px 12px rgba(3,45,145,0.7)',
                     }}
                   >
-                    (Pengasas Financial Faiz)
+                    {founderContent.founderLabel || '(Founder of Financial Faiz)'}
                   </p>
 
                   <motion.div
@@ -1297,17 +1354,17 @@ function Interactive3DSection() {
               {
                 label: 'STORY',
                 color: 'text-[#0757d8]',
-                text: 'Dibesarkan dalam keluarga seorang jurutera, Faiz memahami konsep ‘trading time for money’, yang membentuk cara beliau melihat dan menyampaikan topik kewangan.',
+                text: 'Raised in a practical household, Faiz learned early that financial decisions shape quality of life, not just income.',
               },
               {
                 label: 'MISSION',
                 color: 'text-cyan-600',
-                text: 'Melalui Financial Faiz, Faiz berusaha memberi panduan dan inspirasi kepada generasi muda untuk membuat keputusan kewangan yang lebih bijak.',
+                text: 'Financial Faiz helps people make smarter money decisions through clear content and trusted guidance.',
               },
               {
                 label: 'IMPACT',
                 color: 'text-purple-600',
-                text: 'Pandemik COVID-19 menjadi titik perubahan apabila Faiz beralih ke platform digital, mencapai khalayak lebih luas dengan solusi kewangan yang relevan.',
+                text: 'The COVID period became a turning point as Faiz moved fully into digital and scaled relevant financial education.',
               },
             ]).map((item) => (
               <div key={item.label}>
@@ -1319,8 +1376,8 @@ function Interactive3DSection() {
             ))}
           </div>
 
-          <Button href="#tentang-kami" variant="blue">
-            Ketahui Lebih Lanjut <ArrowRight size={18} />
+          <Button href="#kisah-penuh" variant="blue">
+            {founderContent.ctaLabel || 'Learn More'} <ArrowRight size={18} />
           </Button>
         </motion.div>
       </div>
@@ -1489,7 +1546,7 @@ function VideoGrid() {
                 Live Detected
               </span>
             )}
-            <Button href="https://www.youtube.com/@FinancialFaiz" variant="white">Lihat semua</Button>
+            <Button href="https://www.youtube.com/@FinancialFaiz" variant="white">{isBm ? 'Lihat semua' : 'View all'}</Button>
           </div>
         </div>
 
@@ -1568,7 +1625,7 @@ function PortalSection() {
 
         <div className="mt-6 grid gap-6 rounded-[1.5rem] border border-[#d5e4ff] bg-white/95 p-4 shadow-[0_24px_80px_rgba(10,56,145,0.12)] backdrop-blur sm:rounded-[2.2rem] sm:p-6 lg:grid-cols-[1fr_0.95fr] lg:gap-8 lg:p-8">
           <div className="h-full">
-            <p className="text-xs font-black uppercase tracking-[0.3em] text-[#0757d8]">{portalContent.eyebrow || 'Tentang Pengasas'}</p>
+            <p className="text-xs font-black uppercase tracking-[0.3em] text-[#0757d8]">{portalContent.eyebrow || (isBm ? 'Tentang Pengasas' : 'About the Founder')}</p>
             <h3 className="mt-3 text-3xl font-black leading-[0.96] tracking-[-0.04em] text-[#111] sm:text-4xl md:text-5xl">
               {portalContent.title || 'Suara kewangan yang jelas, dekat dan praktikal'}
             </h3>
@@ -1613,24 +1670,24 @@ function PortalSection() {
                 <div className="hidden h-[340px] place-items-center bg-[linear-gradient(135deg,#e7eefc,#f4f7ff)] text-[#0757d8] sm:h-[420px]">
                   <div className="text-center">
                     <p className="text-6xl font-black">FA</p>
-                    <p className="mt-2 text-xs font-bold uppercase tracking-[0.28em]">Founder Portrait</p>
+                    <p className="mt-2 text-xs font-bold uppercase tracking-[0.28em]">{isBm ? 'Potret Pengasas' : 'Founder Portrait'}</p>
                   </div>
                 </div>
               </div>
               <div className="relative mt-4 text-center">
                 <p className="text-3xl font-black text-[#111] sm:text-4xl">Faiz Azmi</p>
-                <p className="text-base text-gray-700 sm:text-xl">Pengasas Financial Faiz</p>
+                <p className="text-base text-gray-700 sm:text-xl">{isBm ? 'Pengasas Financial Faiz' : 'Founder of Financial Faiz'}</p>
               </div>
             </motion.div>
 
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="rounded-2xl border border-[#dbe7ff] bg-[#f7fbff] p-4">
-                <p className="text-xs font-black uppercase tracking-[0.24em] text-[#0757d8]">Mission</p>
-                <p className="mt-2 text-sm leading-7 text-gray-700">Menterjemah topik kewangan kompleks kepada panduan yang jelas, praktikal dan mudah diamalkan.</p>
+                <p className="text-xs font-black uppercase tracking-[0.24em] text-[#0757d8]">{isBm ? 'Misi' : 'Mission'}</p>
+                <p className="mt-2 text-sm leading-7 text-gray-700">{isBm ? 'Menterjemah topik kewangan kompleks kepada panduan yang jelas, praktikal dan mudah diamalkan.' : 'Translate complex finance topics into clear, practical guidance people can apply immediately.'}</p>
               </div>
               <div className="rounded-2xl border border-[#dbe7ff] bg-[#f7fbff] p-4">
-                <p className="text-xs font-black uppercase tracking-[0.24em] text-[#0757d8]">Impact</p>
-                <p className="mt-2 text-sm leading-7 text-gray-700">Kandungan merentas video, podcast dan portal untuk bantu rakyat buat keputusan kewangan lebih baik.</p>
+                <p className="text-xs font-black uppercase tracking-[0.24em] text-[#0757d8]">{isBm ? 'Impak' : 'Impact'}</p>
+                <p className="mt-2 text-sm leading-7 text-gray-700">{isBm ? 'Kandungan merentas video, podcast dan portal untuk bantu rakyat buat keputusan kewangan lebih baik.' : 'Content across video, podcast, and portal formats to help people make better financial decisions.'}</p>
               </div>
             </div>
           </div>
@@ -1640,7 +1697,7 @@ function PortalSection() {
   );
 }
 function CommandCenter() {
-  const dailyCacheKey = 'ff_command_center_daily_cache_v1';
+  const dailyCacheKey = `ff_command_center_daily_cache_v1_${isBm ? 'bm' : 'en'}`;
   const ytApiKey = import.meta.env.VITE_YOUTUBE_API_KEY;
   const channelIds = useMemo(
     () => [
@@ -1654,14 +1711,14 @@ function CommandCenter() {
 
   const fallbackSummary = useMemo(
     () => ([
-      { title: 'Total Subscribers', value: '399.8K', desc: '4 channels combined', progress: 58 },
-      { title: 'Total Views', value: '21.4M', desc: 'All-time across network', progress: 62 },
-      { title: 'Total Videos', value: '1,715', desc: 'Published content library', progress: 68 },
-      { title: 'Avg Views / Video', value: '12.5K', desc: 'Network performance baseline', progress: 54 },
-      { title: 'Top Channel', value: 'Financial Faiz', desc: '381K subscribers right now', progress: 78 },
-      { title: 'Connected', value: `${channelIds.length}/4`, desc: 'YouTube channels linked', progress: (channelIds.length / 4) * 100 },
+      { title: isBm ? 'Jumlah Subscribers' : 'Total Subscribers', value: '399.8K', desc: isBm ? 'Gabungan 4 saluran' : '4 channels combined', progress: 58 },
+      { title: isBm ? 'Jumlah Views' : 'Total Views', value: '21.4M', desc: isBm ? 'Keseluruhan rangkaian' : 'All-time across network', progress: 62 },
+      { title: isBm ? 'Jumlah Video' : 'Total Videos', value: '1,715', desc: isBm ? 'Perpustakaan kandungan terbitan' : 'Published content library', progress: 68 },
+      { title: isBm ? 'Purata Views / Video' : 'Avg Views / Video', value: '12.5K', desc: isBm ? 'Tanda aras prestasi rangkaian' : 'Network performance baseline', progress: 54 },
+      { title: isBm ? 'Saluran Utama' : 'Top Channel', value: 'Financial Faiz', desc: isBm ? '381K subscribers semasa' : '381K subscribers right now', progress: 78 },
+      { title: isBm ? 'Sambungan' : 'Connected', value: `${channelIds.length}/4`, desc: isBm ? 'Saluran YouTube disambungkan' : 'YouTube channels linked', progress: (channelIds.length / 4) * 100 },
     ]),
-    [channelIds.length],
+    [channelIds.length, isBm],
   );
 
   const [summaryCards, setSummaryCards] = useState(fallbackSummary);
@@ -1749,39 +1806,39 @@ function CommandCenter() {
 
         const nextCards = [
           {
-            title: 'Total Subscribers',
+            title: isBm ? 'Jumlah Subscribers' : 'Total Subscribers',
             value: formatCompactNumber(totals.subscribers),
-            desc: `${items.length} channels combined`,
+            desc: isBm ? `Gabungan ${items.length} saluran` : `${items.length} channels combined`,
             progress: Math.min(100, (totals.subscribers / 700000) * 100),
           },
           {
-            title: 'Total Views',
+            title: isBm ? 'Jumlah Views' : 'Total Views',
             value: formatCompactNumber(totals.views),
-            desc: 'All-time across network',
+            desc: isBm ? 'Keseluruhan rangkaian' : 'All-time across network',
             progress: Math.min(100, (totals.views / 80000000) * 100),
           },
           {
-            title: 'Total Videos',
+            title: isBm ? 'Jumlah Video' : 'Total Videos',
             value: formatAbsoluteNumber(totals.videos),
-            desc: 'Published content library',
+            desc: isBm ? 'Perpustakaan kandungan terbitan' : 'Published content library',
             progress: Math.min(100, (totals.videos / 2500) * 100),
           },
           {
-            title: 'Avg Views / Video',
+            title: isBm ? 'Purata Views / Video' : 'Avg Views / Video',
             value: formatCompactNumber(avgViewsPerVideo),
-            desc: 'Combined engagement efficiency',
+            desc: isBm ? 'Kecekapan engagement gabungan' : 'Combined engagement efficiency',
             progress: Math.min(100, (avgViewsPerVideo / 120000) * 100),
           },
           {
-            title: 'Top Channel',
+            title: isBm ? 'Saluran Utama' : 'Top Channel',
             value: topChannel?.name || 'N/A',
-            desc: `${formatCompactNumber(topChannel?.subscribers || 0)} subscribers`,
+            desc: isBm ? `${formatCompactNumber(topChannel?.subscribers || 0)} subscribers` : `${formatCompactNumber(topChannel?.subscribers || 0)} subscribers`,
             progress: Math.max(18, topShare * 100),
           },
           {
-            title: 'Connected',
+            title: isBm ? 'Sambungan' : 'Connected',
             value: `${items.length}/4`,
-            desc: 'YouTube channels linked',
+            desc: isBm ? 'Saluran YouTube disambungkan' : 'YouTube channels linked',
             progress: Math.min(100, (items.length / 4) * 100),
           },
         ];
@@ -1823,15 +1880,14 @@ function CommandCenter() {
     return () => {
       mounted = false;
     };
-  }, [dailyCacheKey, channelIds, ytApiKey]);
+  }, [dailyCacheKey, channelIds, ytApiKey, isBm]);
 
   const syncLabel = lastSync
     ? new Date(lastSync).toLocaleTimeString('en-MY', { hour: '2-digit', minute: '2-digit' })
-    : 'Live now';
+    : (isBm ? 'Langsung sekarang' : 'Live now');
 
   return (
     <section className="relative overflow-hidden bg-transparent px-4 py-8 sm:px-5 sm:py-10 lg:px-10">
-      <SectionMotion />
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -1839,15 +1895,11 @@ function CommandCenter() {
         transition={{ duration: 0.8, ease: 'easeOut' }}
         className="relative mx-auto max-w-7xl"
       >
-        <motion.div
-          className="pointer-events-none absolute inset-0 opacity-[0.12] [background-image:repeating-linear-gradient(-34deg,rgba(7,87,216,.55)_0px,rgba(7,87,216,.55)_2px,transparent_2px,transparent_30px)]"
-          animate={{ backgroundPosition: ['0px 0px', '140px 0px'] }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-        />
+        <div className="pointer-events-none absolute inset-0" />
         <SectionTitle
           eyebrow={commandContent.eyebrow || 'Command Center'}
           title={commandContent.title || 'Satu dashboard feel untuk semua aset'}
-          desc={commandContent.desc || 'Biar landing page nampak macam real digital ecosystem, bukan sekadar website company biasa'}
+          desc={commandContent.desc || ''}
         />
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
@@ -1933,6 +1985,98 @@ function CommandCenter() {
   );
 }
 
+function FounderStorySection() {
+  const storyItems = founderStoryContent.items || [];
+
+  return (
+    <section id="kisah-penuh" className="relative overflow-hidden bg-transparent px-4 py-8 sm:px-5 sm:py-10 lg:px-10">
+      <ScrollReveal3D className="relative mx-auto max-w-7xl">
+        <SectionTitle
+          eyebrow={founderStoryContent.eyebrow || (isBm ? 'Kisah Penuh' : 'Full Story')}
+          title={founderStoryContent.title || (isBm ? 'Perjalanan Financial Faiz' : 'The Financial Faiz Journey')}
+          desc={founderStoryContent.desc || (isBm ? 'Bahagian ini menceritakan perjalanan penuh brand Financial Faiz dari permulaan hingga impak hari ini.' : 'This section tells the full story of Financial Faiz from its early beginnings to its impact today.')}
+        />
+
+        <div className="mt-8 grid gap-4 sm:mt-10 sm:grid-cols-2">
+          {storyItems.map((item, i) => (
+            <motion.article
+              key={`${item.title}-${i}`}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.06 }}
+              className="rounded-2xl border border-[#d8e4ff] bg-white p-6 shadow-[0_8px_20px_rgba(7,87,216,0.06)]"
+            >
+              <p className="text-sm font-black uppercase tracking-[0.2em] text-[#0757d8]">{item.title}</p>
+              <p className="mt-3 text-base leading-8 text-[#1f2a37]">{item.text}</p>
+            </motion.article>
+          ))}
+        </div>
+      </ScrollReveal3D>
+    </section>
+  );
+}
+
+function ServicesSection() {
+  const items = servicesContent.items || [];
+  const serviceVisuals = [
+    { Icon: BriefcaseBusiness, bg: 'from-[#0b61e8] via-[#0757d8] to-[#07348f]' },
+    { Icon: Music2, bg: 'from-[#ff972f] via-[#ff7f1f] to-[#ff5d00]' },
+    { Icon: Play, bg: 'from-[#06b6d4] via-[#0ea5e9] to-[#2563eb]' },
+    { Icon: BookOpen, bg: 'from-[#16a34a] via-[#22c55e] to-[#4ade80]' },
+    { Icon: Layers3, bg: 'from-[#7c3aed] via-[#6366f1] to-[#3b82f6]' },
+  ];
+
+  return (
+    <section id="services" className="relative overflow-hidden bg-transparent px-4 py-8 sm:px-5 sm:py-10 lg:px-10">
+      <ScrollReveal3D className="relative mx-auto max-w-7xl">
+        <SectionTitle
+          eyebrow={servicesContent.eyebrow || (isBm ? 'Apa Kami Sediakan' : 'What We Provide')}
+          title={servicesContent.title || (isBm ? 'Perkhidmatan Kami' : 'Our Services')}
+          desc={servicesContent.desc || (isBm ? 'Template bahagian perkhidmatan. Boleh ubah ikut pakej dan skop semasa.' : 'Template section for service offerings. Update based on your current package and scope.')}
+        />
+
+        <div className="mt-8 flex flex-wrap justify-center gap-4 sm:mt-10">
+          {items.map((item, i) => (
+            <motion.article
+              key={item.title}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.06 }}
+              whileHover={{ y: -7, scale: 1.01 }}
+              className="group relative w-full overflow-hidden rounded-3xl border border-[#d8e4ff] bg-white/92 p-6 shadow-[0_22px_45px_rgba(7,87,216,0.10)] sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.75rem)]"
+            >
+              <div className="pointer-events-none absolute right-0 top-0 h-28 w-28 translate-x-8 -translate-y-8 rounded-full bg-[#0757d8]/10 blur-2xl transition group-hover:bg-[#0757d8]/20" />
+              <div className="relative z-10">
+                <div className="mb-5 overflow-hidden rounded-2xl border border-[#dbe7ff] bg-[linear-gradient(135deg,#eef5ff,#f8fbff)]">
+                  {item.image ? (
+                    <img src={item.image} alt={item.title} className="h-44 w-full object-cover sm:h-48" />
+                  ) : (
+                    <div className="grid h-44 w-full place-items-center text-sm font-extrabold uppercase tracking-[0.24em] text-[#7a8aa7] sm:h-48">
+                      {isBm ? 'Slot Gambar' : 'Image Slot'}
+                    </div>
+                  )}
+                </div>
+                <div className="mb-3 flex items-center gap-3.5">
+                  <div className={`grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br text-white shadow-[0_14px_30px_rgba(7,87,216,0.35)] ${serviceVisuals[i % serviceVisuals.length].bg}`}>
+                    {(() => {
+                      const Icon = serviceVisuals[i % serviceVisuals.length].Icon;
+                      return <Icon size={22} />;
+                    })()}
+                  </div>
+                  <p className="text-[1.6rem] font-black leading-tight tracking-[-0.02em] text-[#0e1726]">{item.title}</p>
+                </div>
+                <p className="mt-2 text-base font-medium leading-8 text-[#4f5f78]">{item.desc}</p>
+              </div>
+            </motion.article>
+          ))}
+        </div>
+      </ScrollReveal3D>
+    </section>
+  );
+}
+
 function BookSection() {
   return (
     <section className="relative overflow-hidden bg-transparent px-4 py-8 sm:px-5 sm:py-10 lg:px-10">
@@ -1950,25 +2094,25 @@ function BookSection() {
           <div className="relative z-10 grid items-center gap-8 lg:grid-cols-[1fr_0.9fr]">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.38em] text-blue-100">{bookContent.eyebrow || 'Duit Aku, Hidup Aku'}</p>
-              <h2 className="mt-4 text-3xl font-black leading-[0.95] tracking-[-0.055em] sm:text-4xl md:text-6xl">{bookContent.title || 'Nak hidup selesa? Rancanglah kewangan anda sekarang!'}</h2>
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-blue-50">{bookContent.desc || 'Section buku dibuat lebih premium dengan motion stack, hover animation dan conversion button yang jelas'}</p>
+              <h2 className="mt-4 text-3xl font-black leading-[0.95] tracking-[-0.055em] sm:text-4xl md:text-6xl">{bookContent.title || 'Want a more secure life? Start planning your finances today.'}</h2>
+              <p className="mt-6 max-w-2xl text-lg leading-8 text-blue-50">{bookContent.desc || 'A practical financial planning guide built for everyday Malaysians.'}</p>
               <Button href="https://s.shopee.com.my/" variant="light" className="mt-8">
-                {bookContent.buyButton || 'Beli Sekarang'} <ExternalLink size={17} />
+                {bookContent.buyButton || 'Buy Now'} <ExternalLink size={17} />
               </Button>
             </div>
 
             <div className="grid gap-3 md:hidden">
               <div className="rounded-2xl bg-white p-5 text-[#0757d8] shadow-xl">
-                <p className="text-xs font-black uppercase tracking-[0.3em]">Book</p>
+                <p className="text-xs font-black uppercase tracking-[0.3em]">{isBm ? 'Buku' : 'Book'}</p>
                 <h3 className="mt-4 text-3xl font-black leading-none">DUIT AKU HIDUP AKU</h3>
-                <p className="mt-4 text-sm leading-6 text-gray-600">Financial planning untuk hidup yang lebih tersusun</p>
+                <p className="mt-4 text-sm leading-6 text-gray-600">{isBm ? 'Perancangan kewangan untuk hidup yang lebih stabil' : 'Financial planning for a more stable life'}</p>
               </div>
               <div className="rounded-2xl bg-[#eef5ff] p-5 text-[#111] shadow-xl">
                 <BriefcaseBusiness />
-                <h3 className="mt-4 text-2xl font-black leading-tight">Rancang duit, bukan sekadar harap gaji</h3>
+                <h3 className="mt-4 text-2xl font-black leading-tight">{isBm ? 'Rancang kewangan, bukan sekadar tunggu gaji' : 'Plan your money, not just your paycheck'}</h3>
               </div>
               <div className="rounded-2xl bg-white px-5 py-4 text-sm font-black text-[#0757d8] shadow-xl">
-                QR learning support
+                {isBm ? 'Sokongan pembelajaran QR' : 'QR learning support'}
               </div>
             </div>
 
@@ -1978,9 +2122,9 @@ function BookSection() {
                 transition={{ duration: 0.25, ease: 'easeOut' }}
                 className="absolute left-8 top-5 h-[320px] w-[220px] rounded-[2rem] bg-white p-6 text-[#0757d8] shadow-2xl"
               >
-                <p className="text-xs font-black uppercase tracking-[0.3em]">Book</p>
+                <p className="text-xs font-black uppercase tracking-[0.3em]">{isBm ? 'Buku' : 'Book'}</p>
                 <h3 className="mt-8 text-4xl font-black leading-none">DUIT AKU HIDUP AKU</h3>
-                <p className="mt-6 text-sm leading-6 text-gray-600">Financial planning untuk hidup yang lebih tersusun</p>
+                <p className="mt-6 text-sm leading-6 text-gray-600">{isBm ? 'Perancangan kewangan untuk hidup yang lebih stabil' : 'Financial planning for a more stable life'}</p>
               </motion.div>
 
               <motion.div
@@ -1989,7 +2133,7 @@ function BookSection() {
                 className="absolute right-8 top-24 h-[250px] w-[190px] rounded-[2rem] bg-[#eef5ff] p-5 text-[#111] shadow-2xl"
               >
                 <BriefcaseBusiness />
-                <h3 className="mt-8 text-2xl font-black leading-tight">Rancang duit, bukan sekadar harap gaji</h3>
+                <h3 className="mt-8 text-2xl font-black leading-tight">{isBm ? 'Rancang kewangan, bukan sekadar tunggu gaji' : 'Plan your money, not just your paycheck'}</h3>
               </motion.div>
 
               <motion.div
@@ -1997,7 +2141,7 @@ function BookSection() {
                 transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
                 className="absolute bottom-8 left-24 rounded-2xl bg-white px-5 py-4 text-sm font-black text-[#0757d8] shadow-2xl"
               >
-                QR learning support
+                {isBm ? 'Sokongan pembelajaran QR' : 'QR learning support'}
               </motion.div>
             </div>
           </div>
@@ -2011,11 +2155,23 @@ function LogoMarquee({ items }) {
   const doubled = useMemo(() => [...items, ...items], [items]);
 
   return (
-    <div className="mt-8 overflow-hidden rounded-[2rem] border border-[#d8e4ff] bg-[#f7fbff] py-6">
-      <div className="ff-marquee-track flex gap-4 whitespace-nowrap">
+    <div className="mt-8 overflow-hidden px-1 py-2">
+      <div className="ff-marquee-track flex items-center gap-10 whitespace-nowrap [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
         {doubled.map((name, index) => (
-          <motion.div key={`${name}-${index}`} whileHover={{ y: -8, scale: 1.04 }} className="mx-2 rounded-2xl border border-[#d8e4ff] bg-white px-8 py-5 text-sm font-black text-[#07348f] shadow-sm">
-            {name}
+          <motion.div key={`${name}-${index}`} whileHover={{ y: -2, scale: 1.02 }} className="mx-1">
+            {typeof name === 'string' && name.startsWith('/logo-appearance/') ? (
+              <img
+                src={name}
+                alt="Media logo"
+                loading="lazy"
+                className="h-10 w-auto object-contain opacity-100"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+            ) : (
+              <span className="text-sm font-black text-[#07348f]">{name}</span>
+            )}
           </motion.div>
         ))}
       </div>
@@ -2030,8 +2186,8 @@ function MediaSection() {
       <ScrollReveal3D className="relative mx-auto max-w-7xl">
         <SectionTitle
           center
-          eyebrow={mediaContent.eyebrow || 'Saluran Rasmi'}
-          title={mediaContent.title || 'Ikuti saluran rasmi kami yang lain untuk kandungan yang lebih menyeluruh'}
+          eyebrow={mediaContent.eyebrow || 'Official Media Channels'}
+          title={mediaContent.title || 'Explore all official channels for complete Financial Faiz content'}
         />
 
         <div className="mx-auto mt-10 max-w-5xl space-y-8 sm:space-y-10">
@@ -2082,8 +2238,8 @@ function MediaSection() {
 
         <div className="mt-12">
           <SectionTitle
-            eyebrow={mediaContent.seenEyebrow || 'Juga dilihat di'}
-            title={mediaContent.seenTitle || 'Media appearance yang nampak lebih premium'}
+            eyebrow={mediaContent.seenEyebrow || (isBm ? 'Juga dilihat di' : 'Featured In')}
+            title={mediaContent.seenTitle || (isBm ? 'Penampilan media di platform utama' : 'Media appearances across major platforms')}
           />
           <LogoMarquee items={seenAt} />
         </div>
@@ -2108,7 +2264,7 @@ function CareerSection() {
     const hasResume = resume instanceof File && resume.size > 0;
 
     if (!hasResume) {
-      setSubmitStatus({ type: 'error', message: 'Sila lampirkan resume dalam format PDF.' });
+      setSubmitStatus({ type: 'error', message: isBm ? 'Sila lampirkan resume dalam format PDF.' : 'Please attach your resume in PDF format.' });
       return;
     }
 
@@ -2122,12 +2278,12 @@ function CareerSection() {
       });
       const payload = await response.json();
       if (!response.ok || !payload?.ok) {
-        throw new Error(payload?.message || 'Permohonan gagal dihantar. Sila cuba lagi.');
+        throw new Error(payload?.message || (isBm ? 'Permohonan tidak berjaya dihantar. Sila cuba lagi.' : 'Application could not be submitted. Please try again.'));
       }
-      setSubmitStatus({ type: 'success', message: payload.message || 'Permohonan berjaya dihantar.' });
+      setSubmitStatus({ type: 'success', message: payload.message || (isBm ? 'Permohonan berjaya dihantar.' : 'Application submitted successfully.') });
       form.reset();
     } catch (error) {
-      setSubmitStatus({ type: 'error', message: error.message || 'Ralat semasa menghantar borang.' });
+      setSubmitStatus({ type: 'error', message: error.message || (isBm ? 'Ralat berlaku semasa menghantar borang.' : 'An error occurred while submitting the form.') });
     } finally {
       setIsSubmitting(false);
     }
@@ -2137,9 +2293,9 @@ function CareerSection() {
     <section id="kerjaya" className="bg-transparent pt-0">
       <div className="bg-[linear-gradient(90deg,#07348f_0%,#0757d8_45%,#07348f_100%)] px-4 py-12 text-white sm:px-6">
         <div className="mx-auto max-w-6xl text-center">
-          <h2 className="text-4xl font-black tracking-tight sm:text-6xl">{careerContent.title || 'KERJAYA'}</h2>
+          <h2 className="text-4xl font-black tracking-tight sm:text-6xl">{careerContent.title || 'CAREERS'}</h2>
           <p className="mx-auto mt-4 max-w-3xl text-sm leading-7 text-blue-100 sm:text-base">
-            {careerContent.desc || '"Sertai Financial Faiz dalam menerokai dunia kewangan peribadi sambil berinteraksi dengan pakar industri untuk memberikan pandangan bernilai dan meningkatkan literasi kewangan anda."'}
+            {careerContent.desc || 'Join Financial Faiz to build impactful finance content with industry professionals.'}
           </p>
         </div>
       </div>
@@ -2206,9 +2362,9 @@ function CareerSection() {
 
         <div className="mt-16 text-center">
           <h3 className="mx-auto max-w-3xl text-3xl font-black leading-tight text-[#111] sm:text-5xl">
-            {careerContent.inviteTitle || 'Kami turut mengalu-alukan pelajar yang berminat menjalani latihan industri bersama kami.'}
+            {careerContent.inviteTitle || 'We also welcome students interested in internship opportunities with us.'}
           </h3>
-          <p className="mt-3 text-xl font-black text-[#d52f2f] sm:text-2xl">{careerContent.inviteSub || 'Marilah sertai kami!'}</p>
+          <p className="mt-3 text-xl font-black text-[#d52f2f] sm:text-2xl">{careerContent.inviteSub || 'Let’s build your career with us.'}</p>
         </div>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-2 lg:gap-10">
@@ -2231,19 +2387,19 @@ function CareerSection() {
             viewport={{ once: true }}
             className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
           >
-            <h4 className="text-4xl font-black tracking-tight text-[#111]">{careerContent.formTitle || 'Sertai Kami'}</h4>
+            <h4 className="text-4xl font-black tracking-tight text-[#111]">{careerContent.formTitle || 'Join Our Team'}</h4>
             <form className="mt-6 space-y-4" onSubmit={handleCareerSubmit}>
               <div>
-                <label className="mb-2 block text-sm font-semibold text-gray-700">{careerContent.formNameLabel || 'Nama*'}</label>
+                <label className="mb-2 block text-sm font-semibold text-gray-700">{careerContent.formNameLabel || 'Full Name*'}</label>
                 <input
                   name="name"
                   required
                   className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-[#0757d8]"
-                  placeholder="Nama"
+                  placeholder="Your full name"
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-semibold text-gray-700">{careerContent.formEmailLabel || 'Emel*'}</label>
+                <label className="mb-2 block text-sm font-semibold text-gray-700">{careerContent.formEmailLabel || 'Email*'}</label>
                 <input
                   name="email"
                   type="email"
@@ -2253,7 +2409,7 @@ function CareerSection() {
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-semibold text-gray-700">{careerContent.formPhoneLabel || 'No. Telefon'}</label>
+                <label className="mb-2 block text-sm font-semibold text-gray-700">{careerContent.formPhoneLabel || 'Phone Number'}</label>
                 <input
                   name="phone"
                   className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-[#0757d8]"
@@ -2261,17 +2417,17 @@ function CareerSection() {
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-semibold text-gray-700">{careerContent.formMessageLabel || 'Pesanan*'}</label>
+                <label className="mb-2 block text-sm font-semibold text-gray-700">{careerContent.formMessageLabel || 'Message*'}</label>
                 <textarea
                   name="message"
                   rows={4}
                   required
                   className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-[#0757d8]"
-                  placeholder="Pesanan anda"
+                  placeholder="Your message"
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-semibold text-gray-700">Resume (PDF)*</label>
+                <label className="mb-2 block text-sm font-semibold text-gray-700">{isBm ? 'Resume (PDF)*' : 'Resume (PDF)*'}</label>
                 <input
                   name="resume"
                   type="file"
@@ -2285,7 +2441,7 @@ function CareerSection() {
                 disabled={isSubmitting}
                 className="rounded-full bg-black px-8 py-3 text-sm font-black text-white transition hover:bg-[#222] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isSubmitting ? 'Menghantar...' : (careerContent.formSubmitLabel || 'Hantar')}
+                {isSubmitting ? (isBm ? 'Menghantar...' : 'Submitting...') : (careerContent.formSubmitLabel || (isBm ? 'Hantar' : 'Submit'))}
               </button>
             </form>
             {submitStatus.message ? (
@@ -2294,7 +2450,7 @@ function CareerSection() {
               </p>
             ) : null}
             <p className="mt-4 text-sm leading-6 text-gray-600">
-              <span className="font-bold text-[#111]">{careerContent.reminderLabel || 'Peringatan:'}</span> {careerContent.reminder || 'Sila hantar resume anda ke jobs@financialfaiz.com selepas menghantar borang di atas.'}
+              <span className="font-bold text-[#111]">{careerContent.reminderLabel || 'Reminder:'}</span> {careerContent.reminder || 'Please send your resume to jobs@financialfaiz.com after submitting this form.'}
             </p>
           </motion.div>
         </div>
@@ -2309,7 +2465,7 @@ function PartnersSection() {
       <div className="absolute inset-0 opacity-[0.14] [background-image:radial-gradient(circle,rgba(255,255,255,.8)_1px,transparent_1px)] [background-size:24px_24px]" />
       <div className="relative mx-auto max-w-6xl text-center">
         <h2 className="mx-auto max-w-5xl text-4xl font-black leading-[1.08] tracking-[-0.03em] sm:text-6xl md:text-7xl">
-          {partnersContent.title || 'Ikuti media sosial kami untuk konten lebih menarik'}
+          {partnersContent.title || 'Follow our social channels for more finance content'}
         </h2>
 
         <div className="mt-12 flex flex-wrap justify-center gap-4 sm:mt-16 sm:gap-6">
@@ -2433,7 +2589,7 @@ function Footer() {
           </div>
 
           <p className="mt-8 text-sm text-blue-100">
-            {footerContent.copyright || '© 2026 Financial Faiz. Hakcipta Terpelihara.'}
+            {footerContent.copyright || '© 2026 Financial Faiz. All rights reserved.'}
           </p>
         </div>
 
@@ -2441,7 +2597,7 @@ function Footer() {
           <motion.div whileHover={{ x: 6 }} className="flex gap-4 rounded-2xl border border-white/15 bg-white/10 p-4 sm:p-5">
             <Mail />
             <div>
-              <p className="font-black">Email</p>
+              <p className="font-black">{isBm ? 'Emel' : 'Email'}</p>
               <p className="text-blue-50">{footerContent.email || 'hi@financialfaiz.com'}</p>
             </div>
           </motion.div>
@@ -2449,7 +2605,7 @@ function Footer() {
           <motion.div whileHover={{ x: 6 }} className="flex gap-4 rounded-2xl border border-white/15 bg-white/10 p-4 sm:p-5">
             <MapPin />
             <div>
-              <p className="font-black">Alamat</p>
+              <p className="font-black">{isBm ? 'Alamat' : 'Address'}</p>
               <p className="text-blue-50">{footerContent.address || 'Emhub, Persiaran Surian, Kota Damansara, Petaling Jaya'}</p>
             </div>
           </motion.div>
@@ -2505,11 +2661,14 @@ export default function App() {
 
   const sectionRegistry = {
     hero: <Hero key="hero" />,
+    logoBridge: <LogoBridgeSection key="logoBridge" />,
     simulator: <CampaignSimulator key="simulator" />,
     interactive3d: <Interactive3DSection key="interactive3d" />,
+    founderStory: <FounderStorySection key="founderStory" />,
     videos: <VideoGrid key="videos" />,
     portal: <PortalSection key="portal" />,
     command: <CommandCenter key="command" />,
+    services: <ServicesSection key="services" />,
     book: <BookSection key="book" />,
     media: <MediaSection key="media" />,
     career: <CareerSection key="career" />,
