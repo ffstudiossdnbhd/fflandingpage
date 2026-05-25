@@ -160,7 +160,7 @@ export const defaultContent = {
     '/logo-collab/ukm-mp8vg8Kxr5uq6Vng.avif',
     '/logo-collab/uum-d95KQ5nQjLHOR4PO.avif',
   ],
-  heroWallpapers: ['/hero-wallpaper-1.jpg', '/hero-wallpaper-2.jpg'],
+  heroWallpapers: ['/hero-wallpaper-1-opt.jpg', '/hero-wallpaper-2-opt.jpg'],
   sections: {
     hero: {
       badge: 'THE PLATFORM THAT MAKES YOU FINANCIALLY LITERATE',
@@ -280,8 +280,8 @@ export const defaultContent = {
     partners: { title: 'Follow our social channels for more finance content' },
     finalCta: {
       eyebrow: 'Next Version',
-      title: 'Make it feel like a finance media empire',
-      desc: 'Next up: connect real YouTube API, CMS, PHP portal, booking/event, career form, and managed content.',
+      title: 'Financial Faiz Portal',
+      desc: 'Launching soon: a smarter learning portal with real tools, live modules, and guided finance action.',
       backToTop: 'Back to top',
     },
     book: {
@@ -425,9 +425,9 @@ const bmOverrides = {
       mapTitle: 'Saluran Financial Faiz',
       mapMetaPrefix: 'Jumlah Rangkaian',
       highlights: [
-        ['Media Channels', 'Rangkaian YouTube merangkumi Financial Faiz, FF Podcast, DAFF Podcast, dan FF News.'],
-        ['Social Channels', 'Kandungan disebarkan melalui TikTok, Instagram, Facebook, X, Telegram, dan YouTube.'],
-        ['Services', 'Perkhidmatan merangkumi short video, long-form video, podcast, dan kempen jenama.'],
+        ['Saluran Media', 'Rangkaian YouTube merangkumi Financial Faiz, FF Podcast, DAFF Podcast, dan FF News.'],
+        ['Saluran Sosial', 'Kandungan disebarkan melalui TikTok, Instagram, Facebook, X, Telegram, dan YouTube.'],
+        ['Perkhidmatan', 'Perkhidmatan merangkumi video pendek, video panjang, podcast, dan kempen jenama.'],
       ],
     },
     services: {
@@ -463,7 +463,7 @@ const bmOverrides = {
       ],
     },
     partners: {
-      title: 'Ikuti social channel kami untuk lebih banyak kandungan kewangan',
+      title: 'Ikuti saluran sosial kami untuk lebih banyak kandungan kewangan',
     },
     book: {
       title: 'Nak hidup lebih terjamin? Mulakan perancangan kewangan sekarang.',
@@ -476,8 +476,8 @@ const bmOverrides = {
     },
     finalCta: {
       eyebrow: 'Versi Seterusnya',
-      title: 'Jadikan ini empayar media kewangan',
-      desc: 'Seterusnya: sambungkan YouTube API sebenar, CMS, portal PHP, booking/event, borang kerjaya, dan pengurusan kandungan.',
+      title: 'Portal Financial Faiz',
+      desc: 'Akan dilancarkan tidak lama lagi: portal pembelajaran lebih pintar dengan alat sebenar, modul langsung, dan panduan tindakan kewangan.',
       backToTop: 'Kembali ke atas',
     },
   },
@@ -549,4 +549,3 @@ export function publishContentConfig(content) {
   if (typeof window === 'undefined') return;
   window.localStorage.setItem(CONTENT_STORAGE_KEY_LIVE, JSON.stringify(content));
 }
-

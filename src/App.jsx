@@ -44,7 +44,7 @@ const officialChannelRows = contentConfig.officialChannelRows || [];
 const seenAt = contentConfig.seenAt || [];
 const campaignChannels = contentConfig.campaignChannels || [];
 const aboutParagraphs = contentConfig.aboutParagraphs || [];
-const heroWallpapers = contentConfig.heroWallpapers || ['/hero-wallpaper-1.jpg', '/hero-wallpaper-2.jpg'];
+const heroWallpapers = contentConfig.heroWallpapers || ['/hero-wallpaper-1-opt.jpg', '/hero-wallpaper-2-opt.jpg'];
 const heroCenterLogos = contentConfig.heroCenterLogos || [];
 const sectionContent = contentConfig.sections || {};
 const iconMap = { Music2, Camera, Globe2, Send, Play };
@@ -153,7 +153,7 @@ async function fetchYouTubeChannelStats({ apiKey, channelId }) {
 function FFLogo() {
   return (
     <a href="#home" className="inline-flex items-center">
-      <img src="/logo.png" alt="Financial Faiz" className="h-10 w-auto object-contain sm:h-11" />
+      <img src="/logo.png" alt="Financial Faiz" className="h-10 w-auto object-contain sm:h-11" decoding="async" />
     </a>
   );
 }
@@ -194,6 +194,11 @@ function Button({ children, href = '#', variant = 'blue', className = '' }) {
 
 function Header() {
   const [open, setOpen] = useState(false);
+  const [activeHref, setActiveHref] = useState(() => {
+    if (typeof window === 'undefined') return navItems?.[0]?.href || '#home';
+    const hash = window.location.hash;
+    return navItems.some((item) => item.href === hash) ? hash : (navItems?.[0]?.href || '#home');
+  });
   const currentLang = typeof window !== 'undefined'
     ? (new URLSearchParams(window.location.search).get('lang') || window.localStorage.getItem('ff_content_lang_v1') || 'en')
     : 'en';
@@ -207,20 +212,63 @@ function Header() {
     window.location.assign(next);
   };
 
+  useEffect(() => {
+    if (typeof window === 'undefined' || !navItems.length) return undefined;
+
+    const ids = navItems.map((item) => item.href).filter((href) => href.startsWith('#'));
+
+    const updateActiveFromScroll = () => {
+      let nextActive = ids[0] || '#home';
+      let best = Number.POSITIVE_INFINITY;
+
+      ids.forEach((href) => {
+        const el = document.querySelector(href);
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const distance = Math.abs(rect.top - 130);
+        if (rect.top <= 170 && distance < best) {
+          best = distance;
+          nextActive = href;
+        }
+      });
+
+      setActiveHref(nextActive);
+    };
+
+    const onHashChange = () => {
+      const hash = window.location.hash;
+      if (ids.includes(hash)) setActiveHref(hash);
+    };
+
+    window.addEventListener('scroll', updateActiveFromScroll, { passive: true });
+    window.addEventListener('hashchange', onHashChange);
+    updateActiveFromScroll();
+
+    return () => {
+      window.removeEventListener('scroll', updateActiveFromScroll);
+      window.removeEventListener('hashchange', onHashChange);
+    };
+  }, []);
+
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur-2xl">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-5 sm:py-4">
+    <header className="fixed left-0 right-0 top-0 z-50 border-b border-gray-100/80 bg-white/92 backdrop-blur-2xl">
+      <nav className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
         <FFLogo />
 
-        <div className="hidden items-center gap-8 text-sm font-semibold text-[#111] lg:flex">
-          {navItems.map((item, i) => (
-            <a key={item.label} href={item.href} className={`transition hover:text-[#0757d8] ${i === 0 ? 'border-b border-[#111]' : ''}`}>
+        <div className="hidden items-center gap-6 text-sm font-semibold text-[#111] lg:flex xl:gap-8">
+          {navItems.map((item) => (
+            <a
+              key={item.label}
+              href={item.href}
+              onClick={() => setActiveHref(item.href)}
+              className={`whitespace-nowrap border-b transition hover:text-[#0757d8] ${activeHref === item.href ? 'border-[#111]' : 'border-transparent'}`}
+            >
               {item.label}
             </a>
           ))}
         </div>
 
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-2 xl:flex">
           <div className="inline-flex items-center overflow-hidden rounded-full border border-[#d8e4ff] bg-white">
             <button onClick={() => switchLanguage('bm')} className={`px-3 py-1.5 text-xs font-black ${currentLang === 'bm' ? 'bg-[#0757d8] text-white' : 'text-[#07348f]'}`}>BM</button>
             <button onClick={() => switchLanguage('en')} className={`px-3 py-1.5 text-xs font-black ${currentLang === 'en' ? 'bg-[#0757d8] text-white' : 'text-[#07348f]'}`}>EN</button>
@@ -242,6 +290,13 @@ function Header() {
           <div className="mb-3 inline-flex items-center overflow-hidden rounded-full border border-[#d8e4ff] bg-white">
             <button onClick={() => switchLanguage('bm')} className={`px-3 py-1.5 text-xs font-black ${currentLang === 'bm' ? 'bg-[#0757d8] text-white' : 'text-[#07348f]'}`}>BM</button>
             <button onClick={() => switchLanguage('en')} className={`px-3 py-1.5 text-xs font-black ${currentLang === 'en' ? 'bg-[#0757d8] text-white' : 'text-[#07348f]'}`}>EN</button>
+          </div>
+          <div className="mb-3 flex flex-wrap gap-2">
+            {socials.map((s) => (
+              <a key={s.label} href={s.href} className="rounded-full border border-[#d8e4ff] px-3 py-1.5 text-xs font-black text-[#07348f]">
+                {s.label}
+              </a>
+            ))}
           </div>
           {navItems.map((item) => (
             <a key={item.label} href={item.href} onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 font-bold text-[#111] hover:bg-[#eef5ff] hover:text-[#0757d8]">
@@ -741,19 +796,25 @@ function CampaignSimulator() {
 }
 
 function CountdownRing() {
-  const total = 12 * 24 * 60 * 60 * 1000;
-  const [left, setLeft] = useState(total);
+  const launchAt = new Date('2026-09-01T00:00:00+08:00').getTime();
+  const initialLeft = Math.max(0, launchAt - Date.now());
+  const total = Math.max(initialLeft, 1);
+  const [left, setLeft] = useState(initialLeft);
 
   useEffect(() => {
-    const id = setInterval(() => setLeft((prev) => Math.max(0, prev - 1000)), 1000);
+    const id = setInterval(() => {
+      setLeft(Math.max(0, launchAt - Date.now()));
+    }, 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [launchAt]);
 
   const progress = Math.max(0, Math.min(1, left / total));
   const r = 46;
   const c = 2 * Math.PI * r;
   const days = Math.floor(left / (1000 * 60 * 60 * 24));
   const hours = Math.floor((left / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((left / (1000 * 60)) % 60);
+  const seconds = Math.floor((left / 1000) % 60);
 
   return (
     <div className="mx-auto mt-6 flex w-fit items-center gap-4 rounded-2xl border border-white/25 bg-white/10 px-4 py-3 backdrop-blur-xl">
@@ -774,7 +835,10 @@ function CountdownRing() {
       </svg>
       <div>
         <p className="text-xs font-black uppercase tracking-[0.25em] text-blue-100">{isBm ? 'Tetingkap Pelancaran' : 'Launch Window'}</p>
-        <p className="mt-1 text-2xl font-black">{days}d {hours}h</p>
+        <p className="mt-1 text-2xl font-black">
+          {left > 0 ? `${days}d ${hours}h ${minutes}m ${seconds}s` : (isBm ? 'Dilancarkan' : 'Launched')}
+        </p>
+        <p className="mt-1 text-xs font-semibold text-blue-100/90">{isBm ? 'Target: September 2026' : 'Target: September 2026'}</p>
       </div>
     </div>
   );
@@ -1198,7 +1262,7 @@ function Interactive3DSection() {
   };
 
   return (
-    <section className="relative overflow-hidden px-4 py-14 sm:px-5 sm:py-16 lg:px-10">
+    <section id="tentang-kami" className="relative overflow-hidden px-4 py-14 sm:px-5 sm:py-16 lg:px-10">
       <div className="absolute inset-0 bg-[linear-gradient(135deg,#f7fbff_0%,#eef6ff_45%,#ecfbff_100%)]" />
       <div className="absolute inset-0 opacity-[0.35] [background-image:repeating-linear-gradient(-32deg,rgba(7,87,216,0.10)_0px,rgba(7,87,216,0.10)_1px,transparent_1px,transparent_28px)]" />
       <div className="absolute -left-24 top-24 h-80 w-80 rounded-full bg-[#0757d8]/10 blur-3xl" />
@@ -1572,9 +1636,6 @@ function VideoGrid() {
                     loading="lazy"
                     allowFullScreen
                   />
-                  <div className="pointer-events-none absolute left-3 top-3 rounded-full bg-black/55 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white">
-                    {video.isLive ? 'Live' : video.tag}
-                  </div>
                 </div>
               ) : (
                 <a
@@ -1610,7 +1671,7 @@ function VideoGrid() {
 function PortalSection() {
   const [intro, ...storyBlocks] = aboutParagraphs;
   return (
-    <section id="tentang-kami" className="relative overflow-hidden bg-transparent px-4 py-8 sm:px-6 sm:py-12 lg:px-10">
+    <section id="portal-overview" className="relative overflow-hidden bg-transparent px-4 py-8 sm:px-6 sm:py-12 lg:px-10">
       <motion.div
         initial={{ opacity: 0, y: 26 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -1660,6 +1721,8 @@ function PortalSection() {
                 <img
                   src="/faiz-azmi.png"
                   alt="Faiz Azmi"
+                  loading="lazy"
+                  decoding="async"
                   className="h-[340px] w-full object-contain object-bottom sm:h-[420px]"
                   onError={(e) => {
                     e.currentTarget.style.display = 'none';
@@ -1897,6 +1960,7 @@ function CommandCenter() {
       >
         <div className="pointer-events-none absolute inset-0" />
         <SectionTitle
+          center
           eyebrow={commandContent.eyebrow || 'Command Center'}
           title={commandContent.title || 'Satu dashboard feel untuk semua aset'}
           desc={commandContent.desc || ''}
@@ -2051,7 +2115,7 @@ function ServicesSection() {
               <div className="relative z-10">
                 <div className="mb-5 overflow-hidden rounded-2xl border border-[#dbe7ff] bg-[linear-gradient(135deg,#eef5ff,#f8fbff)]">
                   {item.image ? (
-                    <img src={item.image} alt={item.title} className="h-44 w-full object-cover sm:h-48" />
+                    <img src={item.image} alt={item.title} className="h-44 w-full object-cover sm:h-48" loading="lazy" decoding="async" />
                   ) : (
                     <div className="grid h-44 w-full place-items-center text-sm font-extrabold uppercase tracking-[0.24em] text-[#7a8aa7] sm:h-48">
                       {isBm ? 'Slot Gambar' : 'Image Slot'}
@@ -2238,6 +2302,7 @@ function MediaSection() {
 
         <div className="mt-12">
           <SectionTitle
+            center
             eyebrow={mediaContent.seenEyebrow || (isBm ? 'Juga dilihat di' : 'Featured In')}
             title={mediaContent.seenTitle || (isBm ? 'Penampilan media di platform utama' : 'Media appearances across major platforms')}
           />
@@ -2375,8 +2440,10 @@ function CareerSection() {
             className="overflow-hidden rounded-3xl"
           >
             <img
-              src="/faiz-azmi.png"
+              src="/join-our-team.png"
               alt="Studio visual"
+              loading="lazy"
+              decoding="async"
               className="h-full min-h-[320px] w-full object-cover"
             />
           </motion.div>
@@ -2506,14 +2573,16 @@ function FinalCTA() {
         transition={{ duration: 0.8, ease: 'easeOut' }}
         className="relative mx-auto max-w-7xl"
       >
-        <div className="relative overflow-hidden rounded-[1.75rem] bg-[linear-gradient(135deg,#0757d8,#07348f)] p-6 text-center text-white shadow-[0_40px_140px_rgba(7,87,216,0.24)] sm:rounded-[3rem] sm:p-10 md:p-16">
-          <motion.div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent" animate={{ x: ['-120%', '120%'] }} transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }} />
-          <motion.div className="absolute inset-0 opacity-[0.12] [background-image:repeating-linear-gradient(-34deg,rgba(255,255,255,.75)_0px,rgba(255,255,255,.75)_2px,transparent_2px,transparent_30px)]" animate={{ backgroundPosition: ['0px 0px', '140px 0px'] }} transition={{ duration: 7, repeat: Infinity, ease: 'linear' }} />
-          <motion.div className="absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-200/20 blur-3xl" animate={{ opacity: [0.4, 0.6, 0.4] }} transition={{ duration: 4.2, repeat: Infinity, ease: 'easeInOut' }} />
+        <div className="relative overflow-hidden rounded-[1.75rem] p-6 text-center text-white shadow-[0_30px_90px_rgba(7,87,216,0.22)] sm:rounded-[3rem] sm:p-10 md:p-14">
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: "url('/next-version-bg.jpg')" }}
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(7,87,216,0.64),rgba(7,52,143,0.72))]" />
 
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative z-10">
-            <p className="text-sm font-black uppercase tracking-[0.35em] text-blue-100">{finalCtaContent.eyebrow || 'Next Version'}</p>
-            <h2 className="mx-auto mt-5 max-w-4xl text-3xl font-black leading-[0.95] tracking-[-0.06em] sm:text-5xl md:text-7xl">
+            <p className="text-sm font-black uppercase tracking-[0.35em] text-blue-100 [text-shadow:0_2px_12px_rgba(0,0,0,0.35)]">{finalCtaContent.eyebrow || 'Next Version'}</p>
+            <h2 className="mx-auto mt-5 max-w-4xl text-3xl font-black leading-[0.95] tracking-[-0.05em] [text-shadow:0_4px_20px_rgba(0,0,0,0.35)] sm:text-5xl md:text-6xl">
               {(finalCtaContent.title || 'Make it feel like a finance media empire').split(' ').map((word, i) => (
                 <motion.span
                   key={`${word}-${i}`}
@@ -2527,14 +2596,13 @@ function FinalCTA() {
                 </motion.span>
               ))}
             </h2>
-            <motion.p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-blue-50" animate={{ opacity: [0.88, 1, 0.88] }} transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}>
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-blue-50 [text-shadow:0_2px_12px_rgba(0,0,0,0.3)] sm:text-lg">
               {finalCtaContent.desc || 'Lepas ni boleh connect real YouTube API, CMS, PHP portal, booking/event, career form dan managed content'}
-            </motion.p>
-            <CountdownRing />
-            <div className="mt-6 flex justify-center">
-              <ReactiveBars className="border-white/35 bg-white/15" />
+            </p>
+            <div className="mt-7 flex justify-center">
+              <CountdownRing />
             </div>
-            <div className="mt-9 flex justify-center">
+            <div className="mt-8 flex justify-center">
               <Button href="#home" variant="light">
                 {finalCtaContent.backToTop || 'Back to top'} <ArrowRight size={18} />
               </Button>
