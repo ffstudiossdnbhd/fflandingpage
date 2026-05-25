@@ -255,7 +255,7 @@ function Header() {
       <nav className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
         <FFLogo />
 
-        <div className="hidden items-center gap-6 text-sm font-semibold text-[#111] lg:flex xl:gap-8">
+        <div className="hidden items-center gap-6 text-sm font-semibold text-[#111] xl:flex 2xl:gap-8">
           {navItems.map((item) => (
             <a
               key={item.label}
@@ -268,7 +268,7 @@ function Header() {
           ))}
         </div>
 
-        <div className="hidden items-center gap-2 xl:flex">
+        <div className="hidden items-center gap-2 2xl:flex">
           <div className="inline-flex items-center overflow-hidden rounded-full border border-[#d8e4ff] bg-white">
             <button onClick={() => switchLanguage('bm')} className={`px-3 py-1.5 text-xs font-black ${currentLang === 'bm' ? 'bg-[#0757d8] text-white' : 'text-[#07348f]'}`}>BM</button>
             <button onClick={() => switchLanguage('en')} className={`px-3 py-1.5 text-xs font-black ${currentLang === 'en' ? 'bg-[#0757d8] text-white' : 'text-[#07348f]'}`}>EN</button>
@@ -280,13 +280,13 @@ function Header() {
           ))}
         </div>
 
-        <button onClick={() => setOpen(!open)} className="grid h-10 w-10 place-items-center rounded-full border border-gray-200 lg:hidden">
+        <button onClick={() => setOpen(!open)} className="grid h-10 w-10 place-items-center rounded-full border border-gray-200 xl:hidden">
           {open ? <X size={20} /> : <Menu size={20} />}
         </button>
       </nav>
 
       {open && (
-        <div className="border-t border-gray-100 bg-white p-4 lg:hidden">
+        <div className="border-t border-gray-100 bg-white p-4 xl:hidden">
           <div className="mb-3 inline-flex items-center overflow-hidden rounded-full border border-[#d8e4ff] bg-white">
             <button onClick={() => switchLanguage('bm')} className={`px-3 py-1.5 text-xs font-black ${currentLang === 'bm' ? 'bg-[#0757d8] text-white' : 'text-[#07348f]'}`}>BM</button>
             <button onClick={() => switchLanguage('en')} className={`px-3 py-1.5 text-xs font-black ${currentLang === 'en' ? 'bg-[#0757d8] text-white' : 'text-[#07348f]'}`}>EN</button>
@@ -1080,7 +1080,7 @@ function Hero() {
   const reduceMotion = useReducedMotion();
   const [isLiteHero, setIsLiteHero] = useState(() => {
     if (typeof window === 'undefined') return false;
-    return window.matchMedia('(max-width: 900px), (hover: none), (pointer: coarse)').matches;
+    return window.matchMedia('(max-width: 1200px), (hover: none), (pointer: coarse)').matches;
   });
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
 
@@ -1109,7 +1109,7 @@ function Hero() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return undefined;
-    const media = window.matchMedia('(max-width: 900px), (hover: none), (pointer: coarse)');
+    const media = window.matchMedia('(max-width: 1200px), (hover: none), (pointer: coarse)');
     const onChange = () => setIsLiteHero(media.matches || Boolean(reduceMotion));
     onChange();
     if (typeof media.addEventListener === 'function') {
@@ -1144,7 +1144,7 @@ function Hero() {
         <motion.div style={{ rotate: ringRotate }} className="absolute right-[-120px] bottom-[-140px] hidden h-[460px] w-[460px] rounded-full border border-cyan-100/20 sm:block" />
       </motion.div>
 
-      <motion.div style={{ opacity: heroOpacity, filter: heroBlur }} className="relative z-10 mx-auto grid h-full max-w-7xl items-center gap-6 lg:grid-cols-[0.95fr_0.8fr]">
+      <motion.div style={{ opacity: heroOpacity, filter: heroBlur }} className="relative z-10 mx-auto grid h-full max-w-7xl items-center gap-6 xl:grid-cols-[0.95fr_0.8fr]">
         <motion.div style={{ y: titleY, scale: titleScale }} initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75 }} className="text-center text-white lg:text-left">
           <motion.div className="mt-2 mb-4 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/15 px-4 py-2 text-xs font-black backdrop-blur-xl sm:mt-3">
             <Sparkles size={14} /> {heroContent.badge || 'Platform yang menjadikan anda celik kewangan'}
@@ -2693,7 +2693,7 @@ function Footer() {
 export default function App() {
   const [isLiteDevice, setIsLiteDevice] = useState(() => {
     if (typeof window === 'undefined') return false;
-    return window.matchMedia('(max-width: 900px), (hover: none), (pointer: coarse)').matches;
+    return window.matchMedia('(max-width: 1200px), (hover: none), (pointer: coarse)').matches;
   });
   const [showLaunch, setShowLaunch] = useState(() => {
     if (typeof window === 'undefined') return true;
@@ -2716,7 +2716,7 @@ export default function App() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return undefined;
-    const media = window.matchMedia('(max-width: 900px), (hover: none), (pointer: coarse)');
+    const media = window.matchMedia('(max-width: 1200px), (hover: none), (pointer: coarse)');
     const onChange = () => setIsLiteDevice(media.matches);
     onChange();
     if (typeof media.addEventListener === 'function') {
