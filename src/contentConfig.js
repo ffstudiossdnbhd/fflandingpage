@@ -308,6 +308,7 @@ export const defaultContent = {
       { id: 'founderStory', visible: true },
       { id: 'services', visible: true },
       { id: 'media', visible: true },
+      { id: 'adBanner', visible: true },
       { id: 'partners', visible: true },
       { id: 'videos', visible: true },
       { id: 'simulator', visible: false },

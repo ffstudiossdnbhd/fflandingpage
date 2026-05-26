@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   AnimatePresence,
   MotionConfig,
@@ -79,6 +80,7 @@ const defaultSectionLayout = [
   { id: 'book', visible: true },
   { id: 'media', visible: true },
   { id: 'career', visible: true },
+  { id: 'adBanner', visible: true },
   { id: 'partners', visible: true },
   { id: 'cta', visible: true },
   { id: 'footer', visible: true },
@@ -159,6 +161,7 @@ function FFLogo() {
 }
 
 function Button({ children, href = '#', variant = 'blue', className = '' }) {
+  const isExternal = typeof href === 'string' && /^https?:\/\//.test(href);
   const mx = useMotionValue(50);
   const my = useMotionValue(50);
   const glow = useMotionTemplate`radial-gradient(circle at ${mx}% ${my}%, rgba(255,255,255,0.35), transparent 45%)`;
@@ -175,6 +178,8 @@ function Button({ children, href = '#', variant = 'blue', className = '' }) {
   return (
     <motion.a
       href={href}
+      target={isExternal ? '_blank' : undefined}
+      rel={isExternal ? 'noreferrer' : undefined}
       className={`${base} ${style} ${className}`}
       whileHover={{ y: -4, scale: 1.02 }}
       whileTap={{ scale: 0.97, y: -1 }}
@@ -278,6 +283,14 @@ function Header() {
               {s.label}
             </a>
           ))}
+          <a
+            href="http://localhost/testwebsite/ff-3d-landing/api/admin.php"
+            aria-label="Admin Login"
+            title="Admin Login"
+            className="grid h-9 w-9 place-items-center rounded-full border border-[#d8e4ff] bg-white text-[#07348f] transition hover:-translate-y-1 hover:border-[#0757d8] hover:text-[#0757d8]"
+          >
+            <ShieldCheck size={17} />
+          </a>
         </div>
 
         <button onClick={() => setOpen(!open)} className="grid h-10 w-10 place-items-center rounded-full border border-gray-200 xl:hidden">
@@ -1080,7 +1093,7 @@ function Hero() {
   const reduceMotion = useReducedMotion();
   const [isLiteHero, setIsLiteHero] = useState(() => {
     if (typeof window === 'undefined') return false;
-    return window.matchMedia('(max-width: 1200px), (hover: none), (pointer: coarse)').matches;
+    return window.matchMedia('(max-width: 640px)').matches;
   });
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
 
@@ -1109,7 +1122,7 @@ function Hero() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return undefined;
-    const media = window.matchMedia('(max-width: 1200px), (hover: none), (pointer: coarse)');
+    const media = window.matchMedia('(max-width: 640px)');
     const onChange = () => setIsLiteHero(media.matches || Boolean(reduceMotion));
     onChange();
     if (typeof media.addEventListener === 'function') {
@@ -2181,60 +2194,66 @@ function BookSection() {
         className="relative mx-auto max-w-7xl"
       >
         <div className="relative overflow-hidden rounded-[1.75rem] bg-[linear-gradient(120deg,#07348f,#0757d8)] p-5 text-white shadow-[0_45px_140px_rgba(7,87,216,0.22)] sm:rounded-[3rem] sm:p-8 md:p-14">
-          <motion.div className="absolute inset-0 opacity-[0.14] [background-image:repeating-linear-gradient(-34deg,rgba(255,255,255,.75)_0px,rgba(255,255,255,.75)_2px,transparent_2px,transparent_28px)]" animate={{ backgroundPosition: ['0px 0px', '120px 0px'] }} transition={{ duration: 8, repeat: Infinity, ease: 'linear' }} />
+          <motion.div
+            className="absolute inset-0 opacity-[0.16] [background-image:repeating-linear-gradient(-32deg,rgba(255,255,255,.78)_0px,rgba(255,255,255,.78)_2px,transparent_2px,transparent_28px)]"
+            animate={{ backgroundPosition: ['0px 0px', '88px 0px'] }}
+            transition={{ duration: 7.5, repeat: Infinity, ease: 'linear' }}
+          />
           <motion.div className="absolute -right-14 top-10 h-52 w-52 rounded-full bg-cyan-200/30 blur-3xl" animate={{ scale: [1, 1.2, 1], x: [0, -20, 0] }} transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }} />
           <div className="relative z-10 grid items-center gap-8 lg:grid-cols-[1fr_0.9fr]">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.38em] text-blue-100">{bookContent.eyebrow || 'Duit Aku, Hidup Aku'}</p>
               <h2 className="mt-4 text-3xl font-black leading-[0.95] tracking-[-0.055em] sm:text-4xl md:text-6xl">{bookContent.title || 'Want a more secure life? Start planning your finances today.'}</h2>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-blue-50">{bookContent.desc || 'A practical financial planning guide built for everyday Malaysians.'}</p>
-              <Button href="https://s.shopee.com.my/" variant="light" className="mt-8">
+              <Button href="https://shopee.com.my/product/1007164236/22843678340?exp_group=rollout&gads_t_sig=gqRjZGVrxHCFomtpsTE0MjUxOnRzc19zZGtfa2V5omt20QABpGFsZ2_SAAAAZKNkZWvAomN0xEAAAAAMRoz0ZUjQw0QlRa--FjB0AKnHQPF7xv4DyGj9-GQwqn4zSdB6gztmw7ebmtsZs9FPJxlVqctc57WUE3IRqmNpcGhlcnRleHTEmQAAAAwm943y4NzWW54ri51Y4KWmGpmkMc0LBsWD0hMvcOKkVYpEKh8PLsEM_sPdpxDq8eJlQF-jsuyBOiwAOM91gVvBuYsw9JzOwd54N2wi3qPrZGasY4JH2RS7MxJLGVviWGzY0nKeTWp1NCmcz_nrJX3y4ulbT3jghaQzGGyu5VVJS7YgrU4PEukE7yufEZy4mfjiG_IGzg&mmp_pid=an_12166330001&uls_trackid=55o3prec00kv&utm_campaign=id_nkwBpzjF4U&utm_content=----&utm_medium=affiliates&utm_source=an_12166330001&utm_term=eycrda7yju11" variant="light" className="mt-8">
                 {bookContent.buyButton || 'Buy Now'} <ExternalLink size={17} />
               </Button>
             </div>
 
             <div className="grid gap-3 md:hidden">
-              <div className="rounded-2xl bg-white p-5 text-[#0757d8] shadow-xl">
-                <p className="text-xs font-black uppercase tracking-[0.3em]">{isBm ? 'Buku' : 'Book'}</p>
-                <h3 className="mt-4 text-3xl font-black leading-none">DUIT AKU HIDUP AKU</h3>
-                <p className="mt-4 text-sm leading-6 text-gray-600">{isBm ? 'Perancangan kewangan untuk hidup yang lebih stabil' : 'Financial planning for a more stable life'}</p>
-              </div>
-              <div className="rounded-2xl bg-[#eef5ff] p-5 text-[#111] shadow-xl">
+              <motion.div
+                animate={{ y: [0, -5, 0] }}
+                transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut' }}
+                className="rounded-2xl bg-white bg-cover bg-center p-5 text-[#0757d8] shadow-xl"
+                style={{ backgroundImage: "url('/duitakuhidupaku.png')" }}
+              >
+                <div className="mt-52 rounded-xl bg-white/92 px-3 py-2 text-center text-xs font-black tracking-[0.08em] text-[#0757d8] shadow-lg">
+                  {isBm ? 'Sokongan pembelajaran QR' : 'QR learning support'}
+                </div>
+              </motion.div>
+              <motion.div
+                animate={{ y: [0, -3, 0], rotate: [0, -0.35, 0] }}
+                transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }}
+                className="rounded-2xl bg-[#eef5ff] p-5 text-[#111] shadow-xl"
+              >
                 <BriefcaseBusiness />
                 <h3 className="mt-4 text-2xl font-black leading-tight">{isBm ? 'Rancang kewangan, bukan sekadar tunggu gaji' : 'Plan your money, not just your paycheck'}</h3>
-              </div>
-              <div className="rounded-2xl bg-white px-5 py-4 text-sm font-black text-[#0757d8] shadow-xl">
-                {isBm ? 'Sokongan pembelajaran QR' : 'QR learning support'}
-              </div>
+              </motion.div>
             </div>
 
             <div className="relative mx-auto hidden h-[390px] w-full max-w-[450px] md:block">
               <motion.div
                 whileHover={{ y: -10, scale: 1.02 }}
-                transition={{ duration: 0.25, ease: 'easeOut' }}
-                className="absolute left-8 top-5 h-[320px] w-[220px] rounded-[2rem] bg-white p-6 text-[#0757d8] shadow-2xl"
+                animate={{ y: [0, -6, 0] }}
+                transition={{ duration: 4.1, repeat: Infinity, ease: 'easeInOut' }}
+                className="absolute left-8 top-5 h-[320px] w-[220px] rounded-[2rem] bg-white bg-cover bg-center p-6 text-[#0757d8] shadow-2xl"
+                style={{ backgroundImage: "url('/duitakuhidupaku.png')" }}
               >
-                <p className="text-xs font-black uppercase tracking-[0.3em]">{isBm ? 'Buku' : 'Book'}</p>
-                <h3 className="mt-8 text-4xl font-black leading-none">DUIT AKU HIDUP AKU</h3>
-                <p className="mt-6 text-sm leading-6 text-gray-600">{isBm ? 'Perancangan kewangan untuk hidup yang lebih stabil' : 'Financial planning for a more stable life'}</p>
+                <div className="mt-[252px] rounded-xl bg-white/92 px-3 py-2 text-center text-xs font-black tracking-[0.08em] text-[#0757d8] shadow-lg">
+                  {isBm ? 'Sokongan pembelajaran QR' : 'QR learning support'}
+                </div>
               </motion.div>
 
               <motion.div
                 whileHover={{ y: -10, scale: 1.02 }}
-                transition={{ duration: 0.25, ease: 'easeOut' }}
+                animate={{ y: [0, -4, 0], rotate: [0, -0.45, 0] }}
+                transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut' }}
                 className="absolute right-8 top-24 h-[250px] w-[190px] rounded-[2rem] bg-[#eef5ff] p-5 text-[#111] shadow-2xl"
               >
                 <BriefcaseBusiness />
                 <h3 className="mt-8 text-2xl font-black leading-tight">{isBm ? 'Rancang kewangan, bukan sekadar tunggu gaji' : 'Plan your money, not just your paycheck'}</h3>
               </motion.div>
 
-              <motion.div
-                animate={{ opacity: [0.75, 1, 0.75] }}
-                transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute bottom-8 left-24 rounded-2xl bg-white px-5 py-4 text-sm font-black text-[#0757d8] shadow-2xl"
-              >
-                {isBm ? 'Sokongan pembelajaran QR' : 'QR learning support'}
-              </motion.div>
             </div>
           </div>
         </div>
@@ -2453,12 +2472,12 @@ function CareerSection() {
           <p className="mt-3 text-xl font-black text-[#d52f2f] sm:text-2xl">{careerContent.inviteSub || 'Let’s build your career with us.'}</p>
         </div>
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-2 lg:gap-10">
+        <div className="mt-10 grid items-center gap-6 lg:grid-cols-2 lg:gap-10">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="overflow-hidden rounded-3xl"
+            className="mx-auto w-full max-w-[560px] overflow-hidden rounded-3xl"
           >
             <img
               src="/join-our-team.png"
@@ -2473,34 +2492,38 @@ function CareerSection() {
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+            className="mx-auto w-full max-w-[560px] rounded-3xl border border-[#dbe7ff] bg-white/45 p-6 backdrop-blur-[2px] sm:p-8"
           >
-            <h4 className="text-4xl font-black tracking-tight text-[#111]">{careerContent.formTitle || 'Join Our Team'}</h4>
-            <form className="mt-6 space-y-4" onSubmit={handleCareerSubmit}>
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-gray-700">{careerContent.formNameLabel || 'Full Name*'}</label>
-                <input
-                  name="name"
-                  required
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-[#0757d8]"
-                  placeholder="Your full name"
-                />
+            <h4 className="text-center text-4xl font-black tracking-tight text-[#111]">{careerContent.formTitle || 'Join Our Team'}</h4>
+            <p className="mt-2 text-center text-sm font-semibold text-[#587195]">{isBm ? 'Isi maklumat anda dan kami akan hubungi secepat mungkin.' : 'Share your details and our team will reach out shortly.'}</p>
+            <form className="relative mt-6 space-y-4" onSubmit={handleCareerSubmit}>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="mb-2 block text-sm font-semibold text-gray-700">{careerContent.formNameLabel || 'Full Name*'}</label>
+                  <input
+                    name="name"
+                    required
+                    className="w-full rounded-xl border border-[#cfd8e6] bg-white px-4 py-3 outline-none transition focus:border-[#0757d8] focus:ring-4 focus:ring-[#0757d8]/10"
+                    placeholder="Your full name"
+                  />
+                </div>
+                <div>
+                  <label className="mb-2 block text-sm font-semibold text-gray-700">{careerContent.formEmailLabel || 'Email*'}</label>
+                  <input
+                    name="email"
+                    type="email"
+                    required
+                    className="w-full rounded-xl border border-[#cfd8e6] bg-white px-4 py-3 outline-none transition focus:border-[#0757d8] focus:ring-4 focus:ring-[#0757d8]/10"
+                    placeholder="justin23@gmail.com"
+                  />
+                </div>
               </div>
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-gray-700">{careerContent.formEmailLabel || 'Email*'}</label>
-                <input
-                  name="email"
-                  type="email"
-                  required
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-[#0757d8]"
-                  placeholder="justin23@gmail.com"
-                />
-              </div>
+
               <div>
                 <label className="mb-2 block text-sm font-semibold text-gray-700">{careerContent.formPhoneLabel || 'Phone Number'}</label>
                 <input
                   name="phone"
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-[#0757d8]"
+                  className="w-full rounded-xl border border-[#cfd8e6] bg-white px-4 py-3 outline-none transition focus:border-[#0757d8] focus:ring-4 focus:ring-[#0757d8]/10"
                   placeholder="01124626564"
                 />
               </div>
@@ -2510,7 +2533,7 @@ function CareerSection() {
                   name="message"
                   rows={4}
                   required
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-[#0757d8]"
+                  className="w-full rounded-xl border border-[#cfd8e6] bg-white px-4 py-3 outline-none transition focus:border-[#0757d8] focus:ring-4 focus:ring-[#0757d8]/10"
                   placeholder="Your message"
                 />
               </div>
@@ -2521,16 +2544,18 @@ function CareerSection() {
                   type="file"
                   accept="application/pdf,.pdf"
                   required
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition file:mr-4 file:rounded-full file:border-0 file:bg-[#0757d8] file:px-4 file:py-2 file:font-semibold file:text-white hover:file:bg-[#003fbd] focus:border-[#0757d8]"
+                  className="w-full rounded-xl border border-[#cfd8e6] bg-white px-4 py-3 text-sm outline-none transition file:mr-4 file:rounded-full file:border-0 file:bg-[#0757d8] file:px-4 file:py-2 file:font-semibold file:text-white hover:file:bg-[#003fbd] focus:border-[#0757d8] focus:ring-4 focus:ring-[#0757d8]/10"
                 />
               </div>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="rounded-full bg-black px-8 py-3 text-sm font-black text-white transition hover:bg-[#222] disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {isSubmitting ? (isBm ? 'Menghantar...' : 'Submitting...') : (careerContent.formSubmitLabel || (isBm ? 'Hantar' : 'Submit'))}
-              </button>
+              <div className="pt-1">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full rounded-full bg-[linear-gradient(135deg,#07348f,#0757d8)] px-9 py-3 text-sm font-black text-white shadow-[0_14px_30px_rgba(7,87,216,0.28)] transition hover:-translate-y-0.5 hover:shadow-[0_20px_38px_rgba(7,87,216,0.34)] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                >
+                  {isSubmitting ? (isBm ? 'Menghantar...' : 'Submitting...') : (careerContent.formSubmitLabel || (isBm ? 'Hantar' : 'Submit'))}
+                </button>
+              </div>
             </form>
             {submitStatus.message ? (
               <p className={`mt-4 text-sm font-semibold ${submitStatus.type === 'success' ? 'text-green-700' : 'text-red-600'}`}>
@@ -2579,6 +2604,163 @@ function PartnersSection() {
           })}
         </div>
       </div>
+    </section>
+  );
+}
+
+function AdBannerSection() {
+  const [ad, setAd] = useState({ enabled: false, eyebrow: '', title: '', body: '', ctaLabel: '', ctaUrl: '#', imageUrl: '', posters: [] });
+  const [activePoster, setActivePoster] = useState('');
+  const publicSettingsApiUrl = import.meta.env.VITE_PUBLIC_SETTINGS_API_URL || 'http://localhost/testwebsite/ff-3d-landing/api/public_settings.php';
+  const resolveAssetUrl = (rawUrl) => {
+    const value = String(rawUrl || '').trim();
+    if (!value) return '';
+    if (/^https?:\/\//i.test(value)) return value;
+    if (value.startsWith('/')) {
+      try {
+        const apiOrigin = new URL(publicSettingsApiUrl, window.location.href).origin;
+        return `${apiOrigin}${value}`;
+      } catch {
+        return value;
+      }
+    }
+    return value;
+  };
+
+  useEffect(() => {
+    let alive = true;
+    fetch(publicSettingsApiUrl)
+      .then((res) => res.json())
+      .then((payload) => {
+        if (!alive || !payload?.ok || !payload?.ad) return;
+        setAd({
+          enabled: Boolean(payload.ad.enabled),
+          eyebrow: payload.ad.eyebrow || '',
+          title: payload.ad.title || '',
+          body: payload.ad.body || '',
+          ctaLabel: payload.ad.ctaLabel || '',
+          ctaUrl: payload.ad.ctaUrl || '#',
+          imageUrl: resolveAssetUrl(payload.ad.imageUrl || ''),
+          posters: Array.isArray(payload.ad.posters) ? payload.ad.posters.map((x) => resolveAssetUrl(x)).filter(Boolean).slice(0, 8) : [],
+        });
+      })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, [publicSettingsApiUrl]);
+
+  const posterItems = ad.posters.length ? ad.posters : (ad.imageUrl ? [ad.imageUrl] : []);
+  const loopItems = posterItems.length > 1 ? [...posterItems, ...posterItems] : posterItems;
+  const isSinglePoster = posterItems.length === 1;
+  const ctaHref = ad.ctaUrl && ad.ctaUrl !== '#' ? ad.ctaUrl : '#kerjaya';
+  const isExternalCta = /^https?:\/\//.test(ctaHref);
+
+  if (!ad.enabled) return null;
+
+  return (
+    <section className="bg-transparent px-4 py-8 sm:px-6 sm:py-10">
+      <div className="mx-auto max-w-6xl p-2 text-center sm:p-4">
+        <motion.p
+          initial={{ opacity: 0, y: 14, letterSpacing: '0.34em' }}
+          whileInView={{ opacity: 1, y: 0, letterSpacing: '0.28em' }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.45, ease: 'easeOut' }}
+          className="text-xs font-black uppercase tracking-[0.28em] text-[#0757d8]"
+        >
+          {ad.eyebrow || (isBm ? 'Iklan' : 'Sponsored')}
+        </motion.p>
+        <motion.h3
+          initial={{ opacity: 0, y: 20, scale: 0.98 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-2 bg-[linear-gradient(120deg,#0c1530,#0f2f72_45%,#0757d8)] bg-clip-text text-3xl font-black uppercase tracking-[0.02em] text-transparent sm:text-5xl"
+        >
+          {ad.title}
+        </motion.h3>
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.45, delay: 0.08 }}
+          className="mx-auto mt-4 max-w-3xl text-lg font-medium leading-8 text-[#2d3f63]"
+        >
+          {ad.body}
+        </motion.p>
+        <div
+          className="relative mt-6 overflow-hidden"
+          style={{
+            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
+            maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
+          }}
+        >
+          {posterItems.length > 1 ? (
+            <div className="ff-marquee-track flex w-max gap-4" style={{ animationDuration: '34s' }}>
+              {loopItems.map((url, idx) => (
+                <button
+                  key={`${url}-${idx}`}
+                  type="button"
+                  onClick={() => setActivePoster(url)}
+                  className="block"
+                >
+                  <img
+                    src={url}
+                    alt={`${ad.title || 'Advertisement'} ${idx + 1}`}
+                    loading="lazy"
+                    className="h-56 w-[210px] shrink-0 rounded-2xl border border-[#c7d7f6] object-cover opacity-90 shadow-[0_16px_34px_rgba(0,0,0,0.16)] transition hover:opacity-100 sm:h-72 sm:w-[270px]"
+                  />
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="flex justify-center">
+              {posterItems.map((url, idx) => (
+                <button key={`${url}-${idx}`} type="button" onClick={() => setActivePoster(url)} className="block">
+                  <img
+                    src={url}
+                    alt={`${ad.title || 'Advertisement'} ${idx + 1}`}
+                    loading="lazy"
+                    className={`shrink-0 rounded-2xl border border-[#c7d7f6] opacity-90 shadow-[0_16px_34px_rgba(0,0,0,0.16)] transition hover:opacity-100 ${isSinglePoster ? 'h-auto max-h-[78vh] w-[19rem] object-contain sm:w-[26rem]' : 'h-56 w-[210px] object-cover sm:h-72 sm:w-[270px]'}`}
+                  />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        <a
+          href={ctaHref}
+          target={isExternalCta ? '_blank' : undefined}
+          rel={isExternalCta ? 'noreferrer' : undefined}
+          className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#0757d8] px-5 py-2.5 text-sm font-black text-white transition hover:-translate-y-0.5"
+        >
+          {ad.ctaLabel || (isBm ? 'Ketahui Lagi' : 'Learn More')} <ArrowRight size={16} />
+        </a>
+      </div>
+
+      {typeof document !== 'undefined' ? createPortal(
+        <AnimatePresence>
+          {activePoster ? (
+            <motion.button
+              type="button"
+              onClick={() => setActivePoster('')}
+              className="fixed inset-0 z-[9999] grid place-items-center bg-black/70 p-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <motion.img
+                src={activePoster}
+                alt="Poster preview"
+                initial={{ scale: 0.94, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.96, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="max-h-[88vh] w-auto max-w-[94vw] rounded-2xl border border-white/30 shadow-[0_26px_70px_rgba(0,0,0,0.5)]"
+              />
+            </motion.button>
+          ) : null}
+        </AnimatePresence>,
+        document.body,
+      ) : null}
     </section>
   );
 }
@@ -2714,7 +2896,7 @@ function Footer() {
 export default function App() {
   const [isLiteDevice, setIsLiteDevice] = useState(() => {
     if (typeof window === 'undefined') return false;
-    return window.matchMedia('(max-width: 1200px), (hover: none), (pointer: coarse)').matches;
+    return window.matchMedia('(max-width: 640px)').matches;
   });
   const [showLaunch, setShowLaunch] = useState(() => {
     if (typeof window === 'undefined') return true;
@@ -2737,7 +2919,7 @@ export default function App() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return undefined;
-    const media = window.matchMedia('(max-width: 1200px), (hover: none), (pointer: coarse)');
+    const media = window.matchMedia('(max-width: 640px)');
     const onChange = () => setIsLiteDevice(media.matches);
     onChange();
     if (typeof media.addEventListener === 'function') {
@@ -2746,6 +2928,12 @@ export default function App() {
     }
     media.addListener(onChange);
     return () => media.removeListener(onChange);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const trackUrl = import.meta.env.VITE_TRACK_VISIT_API_URL || 'http://localhost/testwebsite/ff-3d-landing/api/track_visit.php';
+    fetch(trackUrl, { method: 'GET' }).catch(() => {});
   }, []);
 
   const sectionRegistry = {
@@ -2761,6 +2949,7 @@ export default function App() {
     book: <BookSection key="book" />,
     media: <MediaSection key="media" />,
     career: <CareerSection key="career" />,
+    adBanner: <AdBannerSection key="adBanner" />,
     partners: <PartnersSection key="partners" />,
     cta: <FinalCTA key="cta" />,
     footer: <Footer key="footer" />,
@@ -2769,10 +2958,23 @@ export default function App() {
   const fallbackIds = defaultSectionLayout.map((x) => x.id);
   const configuredIds = configuredLayout.map((x) => x.id);
   const missingIds = fallbackIds.filter((id) => !configuredIds.includes(id));
-  const mergedLayout = [
+  const mergedLayoutBase = [
     ...configuredLayout,
     ...missingIds.map((id) => ({ id, visible: true })),
   ];
+  const withoutAdBanner = mergedLayoutBase.filter((item) => item.id !== 'adBanner');
+  const heroIndex = withoutAdBanner.findIndex((item) => item.id === 'hero');
+  const mediaIndex = withoutAdBanner.findIndex((item) => item.id === 'media');
+  const partnersIndex = withoutAdBanner.findIndex((item) => item.id === 'partners');
+  const adBannerItem = mergedLayoutBase.find((item) => item.id === 'adBanner') || { id: 'adBanner', visible: true };
+  const insertionIndex = heroIndex >= 0 ? (heroIndex + 1) : (mediaIndex >= 0 ? mediaIndex : partnersIndex);
+  const mergedLayout = insertionIndex >= 0
+    ? [
+      ...withoutAdBanner.slice(0, insertionIndex),
+      adBannerItem,
+      ...withoutAdBanner.slice(insertionIndex),
+    ]
+    : [...withoutAdBanner, adBannerItem];
   const sectionOrder = mergedLayout
     .filter((item) => item?.visible !== false && sectionRegistry[item.id])
     .map((item) => sectionRegistry[item.id]);
