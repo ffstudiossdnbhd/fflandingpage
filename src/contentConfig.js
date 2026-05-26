@@ -28,12 +28,12 @@ export const defaultContent = {
     { label: 'YT', href: 'https://www.youtube.com/@FinancialFaiz' },
   ],
   fallbackVideos: [
-    { title: 'Can you build financial freedom while young?', tag: 'EV & Policy', accent: 'from-blue-950 via-blue-700 to-cyan-400' },
-    { title: 'How to use a credit card the right way', tag: 'Digital Economy', accent: 'from-indigo-950 via-blue-700 to-sky-400' },
-    { title: 'Is buying or building a house better?', tag: 'Retirement', accent: 'from-slate-950 via-blue-800 to-blue-400' },
-    { title: 'A special update for working adults', tag: 'Work & Income', accent: 'from-blue-950 via-cyan-700 to-cyan-300' },
-    { title: 'Salary up, lifestyle up too?', tag: 'Property', accent: 'from-[#07348f] via-[#0757d8] to-[#6bbcff]' },
-    { title: '50-50 finances after marriage?', tag: 'Personal Finance', accent: 'from-[#061b5f] via-[#0757d8] to-[#4d9fff]' },
+    { title: 'Satu individu kawal semua syarikat?', tag: 'EV & Policy', accent: 'from-blue-950 via-blue-700 to-cyan-400' },
+    { title: 'Dividen Simpan SSPN 2025', tag: 'Digital Economy', accent: 'from-indigo-950 via-blue-700 to-sky-400' },
+    { title: 'Cara elak risiko bisnes Alibaba', tag: 'Retirement', accent: 'from-slate-950 via-blue-800 to-blue-400' },
+    { title: 'Simpan duit atau melabur dulu?', tag: 'Work & Income', accent: 'from-blue-950 via-cyan-700 to-cyan-300' },
+    { title: 'Semak partner bisnes sebelum deal', tag: 'Property', accent: 'from-[#07348f] via-[#0757d8] to-[#6bbcff]' },
+    { title: '[S03:E66] Ali Baba, syarikat besar III', tag: 'Personal Finance', accent: 'from-[#061b5f] via-[#0757d8] to-[#4d9fff]' },
   ],
   officialChannelRows: [
     {
@@ -247,7 +247,7 @@ export const defaultContent = {
       reminder: 'Please send your resume to jobs@financialfaiz.com after submitting this form.',
       teamStories: [
         { name: 'Datu Zulkarnain', role: 'Event Coordinator', quote: 'Events are never only about planning. Situations change fast, and decisions must be made quickly. This role fits people who thrive in dynamic environments.', side: 'left', tag: 'DZ', image: '/person1.png' },
-        { name: 'Joegrryio Jamin', role: 'IT Manager', quote: 'K', side: 'right', tag: 'JJ', image: '/person2.png' },
+        { name: 'Joegrryio Jamin', role: 'IT Manager', quote: 'Technology should simplify operations, not complicate them. I focus on building stable systems that keep our team fast, reliable, and ready to scale.', side: 'right', tag: 'JJ', image: '/person2.png' },
         { name: 'Amirul Zulhadi', role: 'Content Coordinator', quote: 'Content must do more than look good. It should create impact by understanding the audience, relevance, and precise delivery.', side: 'left', tag: 'AZ', image: '/person3.png' },
         { name: 'Azim Yusri', role: 'Studio Manager', quote: 'The studio is where ideas become reality. Every detail matters. This role suits people who are detail-oriented and comfortable in a fast-paced setup.', side: 'right', tag: 'AY', image: '/person4.png' },
       ],
@@ -268,13 +268,13 @@ export const defaultContent = {
     services: {
       eyebrow: 'What We Provide',
       title: 'Our Services',
-      desc: 'Template section for service offerings. Update based on your current package and scope.',
+      desc: 'Integrated media and capability solutions designed to strengthen brand authority, improve engagement quality, and deliver measurable business outcomes.',
       items: [
-        { title: 'Event Management', desc: 'End-to-end planning, coordination, and execution for events and brand activations.', image: '/services/event.jpg' },
-        { title: 'Podcast Production', desc: 'Podcast concept, recording workflow, studio handling, and post-production output.', image: '/services/podcast.jpg' },
-        { title: 'TikTok / Short Video', desc: 'Short-form content strategy, scriptwriting, shooting, and edit optimized for social reach.', image: '/services/tiktok.jpg' },
-        { title: 'Financial Training', desc: 'Financial literacy talks, workshops, and training sessions for teams and communities.', image: '/services/training.jpg' },
-        { title: 'Website / System Development', desc: 'Website and internal system development for content operations and user experience.', image: '/services/webdevelopment.jpg' },
+        { title: 'Event Management', desc: 'Strategic planning and end-to-end execution for corporate events and brand activations, with disciplined delivery, stakeholder alignment, and measurable audience impact.', image: '/services/event.jpg' },
+        { title: 'Podcast Production', desc: 'Professional podcast development from editorial strategy to post-production, enabling consistent thought leadership and stronger brand credibility.', image: '/services/podcast.jpg' },
+        { title: 'TikTok / Short Video', desc: 'Performance-led short-form content built on audience insights, clear messaging, and platform-native execution to improve reach, retention, and conversion intent.', image: '/services/tiktok.jpg' },
+        { title: 'Financial Training', desc: 'Structured financial literacy programs for organizations and communities, designed to improve decision quality, confidence, and long-term financial behavior.', image: '/services/training.jpg' },
+        { title: 'Website / System Development', desc: 'Scalable website and internal system development to streamline content operations, improve user experience, and support sustainable digital growth.', image: '/services/webdevelopment.jpg' },
       ],
     },
     partners: { title: 'Follow our social channels for more finance content' },
@@ -330,12 +330,12 @@ const bmOverrides = {
     { label: 'Hubungi', href: '#hubungi-kami' },
   ],
   fallbackVideos: [
-    { title: 'Boleh capai kebebasan kewangan semasa muda?', tag: 'EV & Policy', accent: 'from-blue-950 via-blue-700 to-cyan-400' },
-    { title: 'Cara guna kad kredit dengan betul', tag: 'Digital Economy', accent: 'from-indigo-950 via-blue-700 to-sky-400' },
-    { title: 'Beli rumah atau bina rumah lebih baik?', tag: 'Retirement', accent: 'from-slate-950 via-blue-800 to-blue-400' },
-    { title: 'Pengumuman khas untuk golongan bekerja', tag: 'Work & Income', accent: 'from-blue-950 via-cyan-700 to-cyan-300' },
-    { title: 'Gaji naik, gaya hidup pun naik?', tag: 'Property', accent: 'from-[#07348f] via-[#0757d8] to-[#6bbcff]' },
-    { title: '50-50 kewangan selepas kahwin?', tag: 'Personal Finance', accent: 'from-[#061b5f] via-[#0757d8] to-[#4d9fff]' },
+    { title: 'Satu individu kawal semua syarikat?', tag: 'EV & Policy', accent: 'from-blue-950 via-blue-700 to-cyan-400' },
+    { title: 'Dividen Simpan SSPN 2025', tag: 'Digital Economy', accent: 'from-indigo-950 via-blue-700 to-sky-400' },
+    { title: 'Cara elak risiko bisnes Alibaba', tag: 'Retirement', accent: 'from-slate-950 via-blue-800 to-blue-400' },
+    { title: 'Simpan duit atau melabur dulu?', tag: 'Work & Income', accent: 'from-blue-950 via-cyan-700 to-cyan-300' },
+    { title: 'Semak partner bisnes sebelum deal', tag: 'Property', accent: 'from-[#07348f] via-[#0757d8] to-[#6bbcff]' },
+    { title: '[S03:E66] Ali Baba, syarikat besar III', tag: 'Personal Finance', accent: 'from-[#061b5f] via-[#0757d8] to-[#4d9fff]' },
   ],
   officialChannelRows: [
     {
@@ -433,13 +433,13 @@ const bmOverrides = {
     services: {
       eyebrow: 'Apa Kami Sediakan',
       title: 'Perkhidmatan Kami',
-      desc: 'Template bahagian perkhidmatan. Boleh ubah ikut pakej dan skop semasa.',
+      desc: 'Penyelesaian media dan keupayaan digital bersepadu untuk mengukuhkan kredibiliti jenama, meningkatkan kualiti interaksi audiens, dan menghasilkan impak perniagaan yang jelas serta boleh diukur.',
       items: [
-        { title: 'Pengurusan Event', desc: 'Perancangan, koordinasi, dan pelaksanaan event serta aktivasi jenama secara menyeluruh.', image: '/services/event.jpg' },
-        { title: 'Produksi Podcast', desc: 'Idea podcast, workflow rakaman, pengurusan studio, dan post-production output.', image: '/services/podcast.jpg' },
-        { title: 'TikTok / Video Pendek', desc: 'Strategi short-form, penulisan skrip, shooting, dan editing untuk capaian sosial yang lebih baik.', image: '/services/tiktok.jpg' },
-        { title: 'Latihan Kewangan', desc: 'Sesi ceramah, workshop, dan latihan literasi kewangan untuk organisasi dan komuniti.', image: '/services/training.jpg' },
-        { title: 'Pembangunan Website / Sistem', desc: 'Pembangunan website dan sistem dalaman untuk operasi kandungan serta pengalaman pengguna.', image: '/services/webdevelopment.jpg' },
+        { title: 'Pengurusan Event', desc: 'Perancangan strategik dan pelaksanaan menyeluruh untuk acara korporat serta aktivasi jenama, dengan koordinasi rapi, penjajaran pihak berkepentingan, dan impak audiens yang boleh diukur.', image: '/services/event.jpg' },
+        { title: 'Produksi Podcast', desc: 'Pembangunan podcast profesional daripada strategi kandungan hingga pascaproduksi, untuk membina kredibiliti jenama dan memperkukuh posisi pemikiran kepimpinan secara konsisten.', image: '/services/podcast.jpg' },
+        { title: 'TikTok / Video Pendek', desc: 'Kandungan video pendek berasaskan prestasi, dibina daripada pemahaman audiens, mesej yang jelas, dan pelaksanaan mengikut karakter platform bagi meningkatkan capaian, kadar tontonan kekal, dan niat tindakan.', image: '/services/tiktok.jpg' },
+        { title: 'Latihan Kewangan', desc: 'Program literasi kewangan berstruktur untuk organisasi dan komuniti, dirangka bagi meningkatkan kualiti keputusan, keyakinan, dan tabiat kewangan jangka panjang.', image: '/services/training.jpg' },
+        { title: 'Pembangunan Website / Sistem', desc: 'Pembangunan website dan sistem dalaman yang mudah diskalakan untuk melancarkan operasi kandungan, meningkatkan pengalaman pengguna, dan menyokong pertumbuhan digital yang mampan.', image: '/services/webdevelopment.jpg' },
       ],
     },
     career: {
@@ -457,7 +457,7 @@ const bmOverrides = {
       reminder: 'Sila emel resume anda ke jobs@financialfaiz.com selepas hantar borang ini.',
       teamStories: [
         { name: 'Datu Zulkarnain', role: 'Event Coordinator', quote: 'Event bukan sekadar ikut perancangan. Situasi berubah pantas dan keputusan perlu dibuat segera. Peranan ini sesuai untuk yang selesa dalam suasana dinamik.', side: 'left', tag: 'DZ', image: '/person1.png' },
-        { name: 'Joegrryio Jamin', role: 'IT Manager', quote: 'K', side: 'right', tag: 'JJ', image: '/person2.png' },
+        { name: 'Joegrryio Jamin', role: 'IT Manager', quote: 'Teknologi sepatutnya memudahkan operasi, bukan menyukarkannya. Fokus saya ialah membina sistem yang stabil supaya pasukan kekal pantas, boleh dipercayai, dan bersedia untuk berkembang.', side: 'right', tag: 'JJ', image: '/person2.png' },
         { name: 'Amirul Zulhadi', role: 'Content Coordinator', quote: 'Content bukan sekadar nampak menarik. Ia mesti beri impak melalui pemahaman audience, relevansi, dan penyampaian yang tepat.', side: 'left', tag: 'AZ', image: '/person3.png' },
         { name: 'Azim Yusri', role: 'Studio Manager', quote: 'Studio adalah tempat idea direalisasikan. Setiap detail memainkan peranan. Peranan ini sesuai untuk individu yang teliti dan selesa dalam persekitaran pantas.', side: 'right', tag: 'AY', image: '/person4.png' },
       ],

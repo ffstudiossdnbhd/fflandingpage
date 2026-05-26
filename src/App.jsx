@@ -268,7 +268,7 @@ function Header() {
           ))}
         </div>
 
-        <div className="hidden items-center gap-2 2xl:flex">
+        <div className="hidden items-center gap-2 xl:flex">
           <div className="inline-flex items-center overflow-hidden rounded-full border border-[#d8e4ff] bg-white">
             <button onClick={() => switchLanguage('bm')} className={`px-3 py-1.5 text-xs font-black ${currentLang === 'bm' ? 'bg-[#0757d8] text-white' : 'text-[#07348f]'}`}>BM</button>
             <button onClick={() => switchLanguage('en')} className={`px-3 py-1.5 text-xs font-black ${currentLang === 'en' ? 'bg-[#0757d8] text-white' : 'text-[#07348f]'}`}>EN</button>
@@ -371,7 +371,7 @@ function CursorAura() {
 
   return (
     <>
-      <motion.div style={{ x: ringX, y: ringY }} className="pointer-events-none fixed left-0 top-0 z-[130]">
+      <motion.div style={{ x: ringX, y: ringY }} className="pointer-events-none fixed left-0 top-0 z-[5]">
         <motion.div
           className="-translate-x-1/2 -translate-y-1/2 rounded-full border border-[#6eb0ff]/75 bg-[#0757d8]/10 shadow-[0_0_45px_rgba(7,87,216,0.45)] backdrop-blur"
           animate={{
@@ -384,7 +384,7 @@ function CursorAura() {
         />
       </motion.div>
 
-      <motion.div style={{ x: dotX, y: dotY }} className="pointer-events-none fixed left-0 top-0 z-[131]">
+      <motion.div style={{ x: dotX, y: dotY }} className="pointer-events-none fixed left-0 top-0 z-[5]">
         <motion.div
           className="-translate-x-1/2 -translate-y-1/2 rounded-full bg-[#86beff]"
           animate={{
@@ -817,8 +817,8 @@ function CountdownRing() {
   const seconds = Math.floor((left / 1000) % 60);
 
   return (
-    <div className="mx-auto mt-6 flex w-fit items-center gap-4 rounded-2xl border border-white/25 bg-white/10 px-4 py-3 backdrop-blur-xl">
-      <svg width="110" height="110" className="-rotate-90">
+    <div className="mx-auto mt-5 flex w-fit items-center gap-3 rounded-xl border border-white/25 bg-white/10 px-3 py-2.5 backdrop-blur-xl sm:mt-6 sm:gap-4 sm:rounded-2xl sm:px-4 sm:py-3">
+      <svg width="88" height="88" viewBox="0 0 110 110" className="-rotate-90 sm:h-[110px] sm:w-[110px]">
         <circle cx="55" cy="55" r={r} stroke="rgba(255,255,255,0.25)" strokeWidth="8" fill="none" />
         <motion.circle
           cx="55"
@@ -834,11 +834,11 @@ function CountdownRing() {
         />
       </svg>
       <div>
-        <p className="text-xs font-black uppercase tracking-[0.25em] text-blue-100">{isBm ? 'Tetingkap Pelancaran' : 'Launch Window'}</p>
-        <p className="mt-1 text-2xl font-black">
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-100 sm:text-xs sm:tracking-[0.25em]">{isBm ? 'Tetingkap Pelancaran' : 'Launch Window'}</p>
+        <p className="mt-1 text-xl font-black sm:text-2xl">
           {left > 0 ? `${days}d ${hours}h ${minutes}m ${seconds}s` : (isBm ? 'Dilancarkan' : 'Launched')}
         </p>
-        <p className="mt-1 text-xs font-semibold text-blue-100/90">{isBm ? 'Target: September 2026' : 'Target: September 2026'}</p>
+        <p className="mt-1 text-[11px] font-semibold text-blue-100/90 sm:text-xs">{isBm ? 'Target: September 2026' : 'Target: September 2026'}</p>
       </div>
     </div>
   );
@@ -2084,11 +2084,36 @@ function FounderStorySection() {
 function ServicesSection() {
   const items = servicesContent.items || [];
   const serviceVisuals = [
-    { Icon: BriefcaseBusiness, bg: 'from-[#0b61e8] via-[#0757d8] to-[#07348f]' },
-    { Icon: Music2, bg: 'from-[#ff972f] via-[#ff7f1f] to-[#ff5d00]' },
-    { Icon: Play, bg: 'from-[#06b6d4] via-[#0ea5e9] to-[#2563eb]' },
-    { Icon: BookOpen, bg: 'from-[#16a34a] via-[#22c55e] to-[#4ade80]' },
-    { Icon: Layers3, bg: 'from-[#7c3aed] via-[#6366f1] to-[#3b82f6]' },
+    {
+      Icon: BriefcaseBusiness,
+      bg: 'from-[#1b3a6f] via-[#1d437f] to-[#0f2b57]',
+      ring: 'shadow-[0_10px_22px_rgba(9,33,78,0.22)]',
+      plate: 'bg-[#f7f9fd] text-[#173a72]',
+    },
+    {
+      Icon: Music2,
+      bg: 'from-[#4d658c] via-[#3f5b84] to-[#2e4568]',
+      ring: 'shadow-[0_10px_22px_rgba(21,47,86,0.22)]',
+      plate: 'bg-[#f7f9fd] text-[#274775]',
+    },
+    {
+      Icon: Play,
+      bg: 'from-[#20508d] via-[#2a5e9d] to-[#1d477d]',
+      ring: 'shadow-[0_10px_22px_rgba(18,52,97,0.22)]',
+      plate: 'bg-[#f5f8fd] text-[#1d4f8f]',
+    },
+    {
+      Icon: BookOpen,
+      bg: 'from-[#3f5d87] via-[#355378] to-[#244164]',
+      ring: 'shadow-[0_10px_22px_rgba(17,45,83,0.22)]',
+      plate: 'bg-[#f7f9fd] text-[#27456e]',
+    },
+    {
+      Icon: Building2,
+      bg: 'from-[#334f77] via-[#2e4a72] to-[#1f3b61]',
+      ring: 'shadow-[0_10px_22px_rgba(17,42,76,0.22)]',
+      plate: 'bg-[#f6f9fd] text-[#26466f]',
+    },
   ];
 
   return (
@@ -2123,11 +2148,14 @@ function ServicesSection() {
                   )}
                 </div>
                 <div className="mb-3 flex items-center gap-3.5">
-                  <div className={`grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br text-white shadow-[0_14px_30px_rgba(7,87,216,0.35)] ${serviceVisuals[i % serviceVisuals.length].bg}`}>
-                    {(() => {
-                      const Icon = serviceVisuals[i % serviceVisuals.length].Icon;
-                      return <Icon size={22} />;
-                    })()}
+                  <div className={`relative grid h-12 w-12 place-items-center rounded-[0.8rem] border border-[#d6dfef] bg-gradient-to-br ${serviceVisuals[i % serviceVisuals.length].bg} ${serviceVisuals[i % serviceVisuals.length].ring}`}>
+                    <div className="absolute inset-[1px] rounded-[0.72rem] bg-white/12" />
+                    <div className={`relative grid h-[2.05rem] w-[2.05rem] place-items-center rounded-[0.55rem] border border-[#dbe4f3] ${serviceVisuals[i % serviceVisuals.length].plate}`}>
+                      {(() => {
+                        const Icon = serviceVisuals[i % serviceVisuals.length].Icon;
+                        return <Icon size={17.5} strokeWidth={2.25} />;
+                      })()}
+                    </div>
                   </div>
                   <p className="text-[1.6rem] font-black leading-tight tracking-[-0.02em] text-[#0e1726]">{item.title}</p>
                 </div>
@@ -2366,63 +2394,56 @@ function CareerSection() {
       </div>
 
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
-        <div className="space-y-10 sm:space-y-12">
-          {teamStories.map((item, i) => (
+        <div className="grid gap-5 sm:gap-8 md:grid-cols-2 xl:grid-cols-4">
+          {teamStories.map((item, i) => {
+            const imageTuningByTag = {
+              DZ: { scale: 1.2, x: 0, y: 8 },
+              JJ: { scale: 1.2, x: 0, y: 8 },
+              AZ: { scale: 1.2, x: 0, y: 8 },
+              AY: { scale: 1.2, x: 0, y: 8 },
+            };
+            const imageTuning = imageTuningByTag[item.tag] || { scale: 1.2, x: 0, y: 0 };
+
+            return (
             <motion.article
               key={item.name}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-80px' }}
               transition={{ duration: 0.45, delay: i * 0.06 }}
-              className={`relative grid items-center gap-5 md:gap-8 ${
-                item.side === 'left' ? 'md:grid-cols-[200px_1fr]' : 'md:grid-cols-[1fr_200px]'
-              }`}
+              whileHover={{ y: -8, scale: 1.01 }}
+              className="flex h-full flex-col items-center rounded-3xl bg-white p-5 text-center shadow-[0_20px_44px_rgba(15,23,42,0.12)] sm:p-8"
             >
               <motion.div
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 4 + i * 0.5, repeat: Infinity, ease: 'easeInOut' }}
-                className={`relative mx-auto w-[165px] sm:w-[180px] ${item.side === 'left' ? 'md:order-1' : 'md:order-2'}`}
+                animate={{ y: [0, -4, 0] }}
+                transition={{ duration: 3.2 + i * 0.25, repeat: Infinity, ease: 'easeInOut' }}
+                className="relative z-10 mx-auto w-fit justify-center p-0 shadow-none isolation-isolate sm:flex sm:w-full sm:rounded-2xl sm:bg-white sm:p-1.5 sm:shadow-[0_8px_18px_rgba(17,24,39,0.12)]"
               >
-                <div className="pointer-events-none absolute -inset-5 rounded-full bg-[#0757d8]/12 blur-2xl" />
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  loading="lazy"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
-                  className="relative z-10 h-[185px] w-full scale-[1.08] object-contain drop-shadow-[0_18px_28px_rgba(0,0,0,0.20)] sm:h-[200px] sm:scale-[1.1]"
-                />
-                <div className="absolute -bottom-2 left-1/2 z-20 -translate-x-1/2 rounded-full bg-[#0757d8] px-3 py-1 text-[11px] font-semibold tracking-[0.16em] text-white">
-                  {item.tag}
+                <div className="h-40 w-40 overflow-hidden rounded-xl border-[7px] border-[#2563eb] bg-white p-1 sm:h-52 sm:w-52 sm:border-[8px]">
+                  <div className="relative h-full w-full overflow-hidden rounded-md bg-[#f3f4f6]">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                      className="absolute left-1/2 top-1/2 h-full w-full object-contain"
+                      style={{
+                        transform: `translate(calc(-50% + ${imageTuning.x}px), calc(-50% + ${imageTuning.y}px)) scale(${imageTuning.scale})`,
+                        transformOrigin: 'center center',
+                      }}
+                    />
+                  </div>
                 </div>
               </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, x: item.side === 'left' ? 24 : -24 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.45, delay: 0.08 + i * 0.04 }}
-                className={`text-center ${item.side === 'left' ? 'md:order-2 md:text-left' : 'md:order-1 md:text-right'}`}
-              >
-                <p className="text-[1.45rem] font-semibold leading-[1.3] text-[#1d2430] sm:text-[1.6rem] lg:text-[1.7rem]">
-                  “{item.quote}”
-                </p>
-                <p className="mt-3 text-base font-medium text-[#2f3a4c] sm:text-[1.25rem]">
-                  - {item.name} | {item.role}
-                </p>
-                <motion.div
-                  className={`mt-5 h-[2px] w-36 rounded-full bg-[linear-gradient(90deg,#2f7cff,#8abfff)] ${
-                    item.side === 'left' ? 'md:mr-auto' : 'md:ml-auto'
-                  } mx-auto`}
-                  initial={{ scaleX: 0, opacity: 0.5 }}
-                  whileInView={{ scaleX: 1, opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.2 + i * 0.06 }}
-                />
-              </motion.div>
+              <p className="mt-4 text-[1.28rem] font-black tracking-tight text-[#1a1a1a] sm:mt-5 sm:text-[1.5rem]">{item.name}</p>
+              <p className="mt-1 text-[0.8rem] font-bold uppercase tracking-[0.1em] text-[#d946ef]">{item.role}</p>
+              <p className="mt-3 text-[1rem] leading-8 text-[#525866] sm:mt-4 sm:text-[1.05rem] sm:min-h-[240px]">{item.quote}</p>
             </motion.article>
-          ))}
+          );
+          })}
         </div>
 
         <div className="mt-16 text-center">
@@ -2848,3 +2869,4 @@ export default function App() {
     </MotionConfig>
   );
 }
+
